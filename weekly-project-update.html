@@ -416,7 +416,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v4</footer>
+<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v6</footer>
 
 <script>
 (function(){
@@ -536,11 +536,12 @@
   /* ---------- Note ---------- */
   function buildNote(){
     var plain = [], html = [], dash = [];
-    function bold(t){ plain.push(t); html.push("<b>" + esc(t) + "</b>"); dash.push('<b><font color="#C8102E">' + esc(t) + '</font></b>'); }
+    function bold(t){ plain.push(t); html.push("<b>" + esc(t) + "</b>"); dash.push('<b>' + esc(t) + '</b>'); }
+    function boldRed(t){ plain.push(t); html.push("<b>" + esc(t) + "</b>"); dash.push('<b><font color="#C8102E">' + esc(t) + '</font></b>'); }
     function kv(label, value){
       plain.push(label + " " + value);
       html.push("<b>" + esc(label) + "</b> " + esc(value));
-      dash.push('<b><font color="#C8102E">' + esc(label) + '</font></b> ' + esc(value));
+      dash.push('<b>' + esc(label) + '</b> ' + esc(value));
     }
     function blank(){ plain.push(""); html.push(""); dash.push(""); }
     function bullet(t){ plain.push("- " + t); html.push("- " + esc(t)); dash.push("- " + esc(t)); }
@@ -555,7 +556,7 @@
       blank();
     }
 
-    bold("WEEKLY PROJECT UPDATE");
+    boldRed("WEEKLY PROJECT UPDATE");
     bold((v("job") || "Job#") + " - " + (v("lname").toUpperCase() || "LAST") + ", " + (v("fname").toUpperCase() || "FIRST"));
     kv("Date:", fmtDate(v("idate")));
     blank();
@@ -726,13 +727,13 @@
     var note = buildNote();
     var subject = (v("job") || "Job#") + ":";
     var base = "mailto:" + DASH_EMAIL + "?subject=" + encodeURIComponent(subject);
-    if(note.plain.length > MAILTO_SOFT_LIMIT){
-      copyPlain(note.plain).then(function(){
+    if(note.dash.length > MAILTO_SOFT_LIMIT){
+      copyPlain(note.dash).then(function(){
         openMailto(base + "&body=" + encodeURIComponent("<< Full weekly update note is copied to your clipboard - PASTE it here and delete this line >>"));
         showToast("<b>Note copied to clipboard.</b> The email opened with the address and subject pre-filled - long notes get cut off by mail apps, so paste the note into the body.", null, true);
       });
     } else {
-      openMailto(base + "&body=" + encodeURIComponent(note.plain));
+      openMailto(base + "&body=" + encodeURIComponent(note.dash));
     }
   }
   function sendToDash(){

@@ -1,5 +1,5 @@
 /* Kustom PDRI service worker */
-var VERSION = "pdri-v21";
+var VERSION = "pdri-v23";
 var SHELL = [
   "./",
   "./index.html",

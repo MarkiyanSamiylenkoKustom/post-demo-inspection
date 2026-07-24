@@ -676,7 +676,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v14</footer>
+<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v16</footer>
 
 <script>
 (function(){
@@ -882,11 +882,12 @@
 
     function raw(t){ plain.push(t); html.push(esc(t)); dash.push(esc(t)); }
     function blank(){ plain.push(""); html.push(""); dash.push(""); }
-    function bold(t){ plain.push(t); html.push("<b>" + esc(t) + "</b>"); dash.push('<b><font color="#C8102E">' + esc(t) + '</font></b>'); }
+    function bold(t){ plain.push(t); html.push("<b>" + esc(t) + "</b>"); dash.push('<b>' + esc(t) + '</b>'); }
+    function boldRed(t){ plain.push(t); html.push("<b>" + esc(t) + "</b>"); dash.push('<b><font color="#C8102E">' + esc(t) + '</font></b>'); }
     function kv(label, value){
       plain.push(label + ": " + value);
       html.push("<b>" + esc(label) + ":</b> " + esc(value));
-      dash.push('<b><font color="#C8102E">' + esc(label) + ':</font></b> ' + esc(value));
+      dash.push('<b>' + esc(label) + ':</b> ' + esc(value));
     }
     function sep(){ blank(); raw("____"); blank(); }
     function bulletLines(arr){
@@ -901,7 +902,7 @@
     var last = v("lname").toUpperCase();
     var first = v("fname").toUpperCase();
     var nameLine = (v("job") || "Job#") + " - " + (last || "LAST") + ", " + (first || "FIRST");
-    bold(nameLine);
+    boldRed(nameLine);
     kv("Inspection Date", fmtDate(v("idate")));
     kv("Program", v("program"));
     kv("Customer Signed PA", segState.pa);
@@ -1188,15 +1189,15 @@
     var subject = (v("job") || "Job#") + ":";
     var base = "mailto:" + DASH_EMAIL + "?subject=" + encodeURIComponent(subject);
 
-    if(note.plain.length > MAILTO_SOFT_LIMIT){
+    if(note.dash.length > MAILTO_SOFT_LIMIT){
       /* Long notes get cut off by mail apps in a mailto link. Copy the full
          note to the clipboard and open the email with a paste reminder. */
-      copyPlain(note.plain).then(function(){
+      copyPlain(note.dash).then(function(){
         openMailto(base + "&body=" + encodeURIComponent("<< Full inspection note is copied to your clipboard - PASTE it here and delete this line >>"));
         showToast("<b>Note copied to clipboard.</b> The email opened with the address and subject pre-filled - long notes get cut off by mail apps, so paste the note into the body.", null, true);
       });
     } else {
-      openMailto(base + "&body=" + encodeURIComponent(note.plain));
+      openMailto(base + "&body=" + encodeURIComponent(note.dash));
     }
   }
 
