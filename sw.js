@@ -1,9 +1,10 @@
 /* Kustom PDRI service worker */
-var VERSION = "pdri-v13";
+var VERSION = "pdri-v18";
 var SHELL = [
   "./",
   "./index.html",
   "./initial-job-walk.html",
+  "./weekly-project-update.html",
   "./manifest.webmanifest",
   "./icon-192.png",
   "./icon-512.png"
