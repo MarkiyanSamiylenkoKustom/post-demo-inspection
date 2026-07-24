@@ -416,7 +416,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v2</footer>
+<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v4</footer>
 
 <script>
 (function(){
@@ -486,17 +486,25 @@
       '</div>' +
       '<div class="field"><label>Work Item</label>' +
       '<textarea class="wi-text" placeholder="One line per bullet, e.g.&#10;Drywall hung and finished in kitchen and living room"></textarea></div>' +
-      '<label style="font-size:.72rem;color:var(--muted)">Responsible Party</label>' +
-      '<div class="wi-party">' + chips + '</div>';
+      '<div class="field" style="margin-bottom:0"><label>Responsible Party</label>' +
+      '<input type="text" class="wi-party-input" placeholder="Tap a tile or type your own">' +
+      '<div class="wi-party">' + chips + '</div></div>';
     card.dataset.party = data.party || "";
     card.querySelector(".wi-text").value = data.text || "";
+    var partyInput = card.querySelector(".wi-party-input");
+    partyInput.value = card.dataset.party;
+    function syncPartyTiles(){
+      card.dataset.party = partyInput.value.trim();
+      card.querySelectorAll(".wi-party button").forEach(function(x){
+        x.classList.toggle("on", x.getAttribute("data-v") === card.dataset.party);
+      });
+    }
+    syncPartyTiles();
+    partyInput.addEventListener("input", function(){ syncPartyTiles(); render(); saveDraft(); });
     card.querySelectorAll(".wi-party button").forEach(function(b){
-      b.classList.toggle("on", b.getAttribute("data-v") === card.dataset.party);
       b.addEventListener("click", function(){
-        card.dataset.party = (card.dataset.party === b.getAttribute("data-v")) ? "" : b.getAttribute("data-v");
-        card.querySelectorAll(".wi-party button").forEach(function(x){
-          x.classList.toggle("on", x.getAttribute("data-v") === card.dataset.party);
-        });
+        partyInput.value = (partyInput.value.trim() === b.getAttribute("data-v")) ? "" : b.getAttribute("data-v");
+        syncPartyTiles();
         render(); saveDraft();
       });
     });
@@ -665,7 +673,7 @@
   }
   /* COPY_MODE: "rich" copies real HTML to the clipboard (DASH renders formatting on paste).
      Switch to "raw" if DASH only renders when the literal HTML markup is pasted as text. */
-  var COPY_MODE = "rich";
+  var COPY_MODE = "raw";
 
   function copyNote(btn){
     var note = buildNote();
