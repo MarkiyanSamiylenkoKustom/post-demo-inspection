@@ -441,7 +441,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; INITIAL JOB WALK &middot; INTERNAL TOOL &middot; v10</footer>
+<footer>KUSTOM US &middot; INITIAL JOB WALK &middot; INTERNAL TOOL &middot; v11</footer>
 
 <script>
 (function(){
@@ -536,14 +536,15 @@
 
   /* ---------- Note ---------- */
   function buildNote(){
-    var plain = [], html = [];
-    function bold(t){ plain.push(t); html.push("<b>" + esc(t) + "</b>"); }
+    var plain = [], html = [], dash = [];
+    function bold(t){ plain.push(t); html.push("<b>" + esc(t) + "</b>"); dash.push('<b><font color="#C8102E">' + esc(t) + '</font></b>'); }
     function kv(label, value){
       plain.push(label + " " + value);
       html.push("<b>" + esc(label) + "</b> " + esc(value));
+      dash.push('<b><font color="#C8102E">' + esc(label) + '</font></b> ' + esc(value));
     }
-    function blank(){ plain.push(""); html.push(""); }
-    function bullet(t){ plain.push("- " + t); html.push("- " + esc(t)); }
+    function blank(){ plain.push(""); html.push(""); dash.push(""); }
+    function bullet(t){ plain.push("- " + t); html.push("- " + esc(t)); dash.push("- " + esc(t)); }
 
     bold("INITIAL JOB WALK");
     bold((v("job") || "Job#") + " - " + (v("lname").toUpperCase() || "LAST") + ", " + (v("fname").toUpperCase() || "FIRST"));
@@ -642,7 +643,7 @@
       out.forEach(bullet);
     }
 
-    return { plain: plain.join("\n"), html: html.join("<br>") };
+    return { plain: plain.join("\n"), html: html.join("<br>"), dash: dash.join("<br/>") };
   }
 
   var previewEl  = document.getElementById("preview");
@@ -722,6 +723,10 @@
     document.execCommand("copy");
     ta.remove();
   }
+  /* COPY_MODE: "rich" copies real HTML to the clipboard (DASH renders formatting on paste).
+     Switch to "raw" if DASH only renders when the literal HTML markup is pasted as text. */
+  var COPY_MODE = "rich";
+
   function copyNote(btn){
     var note = buildNote();
     function done(){
@@ -730,17 +735,21 @@
       btn.classList.add("copied");
       setTimeout(function(){ btn.textContent = old; btn.classList.remove("copied"); }, 1800);
     }
+    if(COPY_MODE === "raw"){
+      copyPlain(note.dash).then(done);
+      return;
+    }
     if(navigator.clipboard && window.ClipboardItem){
       var item = new ClipboardItem({
-        "text/plain": new Blob([note.plain], {type:"text/plain"}),
-        "text/html":  new Blob([note.html],  {type:"text/html"})
+        "text/html":  new Blob([note.dash],  {type:"text/html"}),
+        "text/plain": new Blob([note.plain], {type:"text/plain"})
       });
       navigator.clipboard.write([item]).then(done).catch(function(){
-        navigator.clipboard.writeText(note.plain).then(done);
+        copyPlain(note.dash).then(done);
       });
-    } else if(navigator.clipboard){
-      navigator.clipboard.writeText(note.plain).then(done);
-    } else { legacyCopy(note.plain); done(); }
+    } else {
+      copyPlain(note.dash).then(done);
+    }
   }
   document.getElementById("copyBtn").addEventListener("click", function(){ copyNote(this); });
   document.getElementById("mCopyBtn").addEventListener("click", function(){ copyNote(this); });
