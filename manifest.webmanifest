@@ -1,0 +1,16 @@
+{
+  "name": "Kustom Post-Demo Rebuild Inspection",
+  "short_name": "PDRI",
+  "description": "Post-demo rebuild inspection form. Builds a Dash-ready note and sends it to DASH.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#D72428",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
