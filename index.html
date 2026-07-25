@@ -676,7 +676,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v16</footer>
+<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v17</footer>
 
 <script>
 (function(){
@@ -1186,7 +1186,7 @@
 
   function doSend(){
     var note = buildNote();
-    var subject = (v("job") || "Job#") + ":";
+    var subject = (v("job") || "Job#") + ": Post-Demo Inspection";
     var base = "mailto:" + DASH_EMAIL + "?subject=" + encodeURIComponent(subject);
 
     if(note.dash.length > MAILTO_SOFT_LIMIT){
@@ -1222,7 +1222,7 @@
   /* ---------- Share (native share sheet) ---------- */
   document.getElementById("shareBtn").addEventListener("click", function(){
     var note = buildNote();
-    var title = (v("job") || "Job#") + ":";
+    var title = (v("job") || "Job#") + ": Post-Demo Inspection";
     if(navigator.share){
       navigator.share({ title: title, text: note.plain }).catch(function(err){
         if(err && err.name !== "AbortError"){

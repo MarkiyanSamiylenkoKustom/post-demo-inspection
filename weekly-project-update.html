@@ -416,7 +416,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v6</footer>
+<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v7</footer>
 
 <script>
 (function(){
@@ -725,7 +725,7 @@
   }
   function doSend(){
     var note = buildNote();
-    var subject = (v("job") || "Job#") + ":";
+    var subject = (v("job") || "Job#") + ": Weekly Project Update";
     var base = "mailto:" + DASH_EMAIL + "?subject=" + encodeURIComponent(subject);
     if(note.dash.length > MAILTO_SOFT_LIMIT){
       copyPlain(note.dash).then(function(){
@@ -754,7 +754,7 @@
   /* ---------- Share ---------- */
   document.getElementById("shareBtn").addEventListener("click", function(){
     var note = buildNote();
-    var title = (v("job") || "Job#") + ":";
+    var title = (v("job") || "Job#") + ": Weekly Project Update";
     if(navigator.share){
       navigator.share({ title: title, text: note.plain }).catch(function(err){
         if(err && err.name !== "AbortError"){
