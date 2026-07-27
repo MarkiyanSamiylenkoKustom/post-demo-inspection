@@ -441,7 +441,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; INITIAL JOB WALK &middot; INTERNAL TOOL &middot; v15</footer>
+<footer>KUSTOM US &middot; INITIAL JOB WALK &middot; INTERNAL TOOL &middot; v16</footer>
 
 <script>
 (function(){
@@ -790,7 +790,27 @@
       openMailto(base + "&body=" + encodeURIComponent(note.dash));
     }
   }
+  function hardRequired(){
+    var hard = [];
+    if(!v("job")){ document.getElementById("job").classList.add("invalid"); hard.push("Job ID # in Dash"); }
+    if(!v("fname") && !v("lname")){
+      document.getElementById("fname").classList.add("invalid");
+      document.getElementById("lname").classList.add("invalid");
+      hard.push("Customer name (first or last)");
+    }
+    return hard;
+  }
+
   function sendToDash(){
+    var hard = hardRequired();
+    if(hard.length){
+      showToast(
+        "<b>Required before sending</b> - the email will not open without:<ul><li>" + hard.join("</li><li>") + "</li></ul>",
+        [ {label:"OK", primary:true, fn:null} ],
+        true
+      );
+      return;
+    }
     var missing = validate();
     if(missing.length){
       showToast(

@@ -320,7 +320,7 @@
         </div>
         <div class="field">
           <label for="program">Program</label>
-          <input type="text" id="program" placeholder="e.g. CC &ndash; Liberty Mutual" data-k>
+          <input type="text" id="program" list="dl-program" placeholder="Select or enter a program" autocomplete="off" data-k>
         </div>
       </div>
     </section>
@@ -365,6 +365,10 @@
           <button type="button" data-v="Yes">Yes</button>
           <button type="button" data-v="No">No</button>
         </div>
+        <div class="cond" id="contCond">
+          <label for="contDetails" style="margin-top:10px">Continuous Flooring Details</label>
+          <textarea id="contDetails" placeholder="Which flooring is continuous and which rooms or areas it runs through, e.g.&#10;Carpet is continuous through both bedrooms, the living room, and the hallway.&#10;Vinyl is continuous through the kitchen, hallway and both bathrooms." data-k></textarea>
+        </div>
       </div>
       <div class="field">
         <label for="floorDetails">Flooring Details</label>
@@ -375,25 +379,33 @@
         <textarea id="areas" placeholder="List all affected areas, one per line (entry, hallway, living room, bedrooms, etc.)" data-k></textarea>
       </div>
       <div class="field">
-        <label><span class="qnum">10.</span>Drywall Thickness</label>
-        <div class="seg" data-seg="drywall">
+        <label><span class="qnum">10.</span>Wall Drywall Thickness</label>
+        <div class="seg" data-seg="walldw">
           <button type="button" data-v="1/2 inch">1/2 inch</button>
           <button type="button" data-v="5/8 inch">5/8 inch</button>
           <button type="button" data-v="Double layer">Double layer</button>
           <button type="button" data-v="Unknown">Unknown</button>
         </div>
-        <input type="text" class="other-inline" id="drywallOther" placeholder="Other (optional)" data-k>
+      </div>
+      <div class="field">
+        <label><span class="qnum">11.</span>Ceiling Drywall Thickness</label>
+        <div class="seg" data-seg="ceildw">
+          <button type="button" data-v="1/2 inch">1/2 inch</button>
+          <button type="button" data-v="5/8 inch">5/8 inch</button>
+          <button type="button" data-v="Double layer">Double layer</button>
+          <button type="button" data-v="Unknown">Unknown</button>
+        </div>
       </div>
       <div class="row2">
         <div class="field">
-          <label><span class="qnum">11.</span>Is Ceiling Affected?</label>
+          <label><span class="qnum">12.</span>Is Ceiling Affected?</label>
           <div class="seg" data-seg="ceiling">
             <button type="button" data-v="Yes">Yes</button>
             <button type="button" data-v="No">No</button>
           </div>
         </div>
         <div class="field">
-          <label><span class="qnum">12.</span>Is Insulation Affected?</label>
+          <label><span class="qnum">13.</span>Is Insulation Affected?</label>
           <div class="seg" data-seg="insul">
             <button type="button" data-v="Yes">Yes</button>
             <button type="button" data-v="No">No</button>
@@ -402,14 +414,14 @@
       </div>
       <div class="row2">
         <div class="field">
-          <label><span class="qnum">13.</span>Are Cabinets Affected?</label>
+          <label><span class="qnum">14.</span>Are Cabinets Affected?</label>
           <div class="seg" data-seg="cab">
             <button type="button" data-v="Yes">Yes</button>
             <button type="button" data-v="No">No</button>
           </div>
         </div>
         <div class="field">
-          <label><span class="qnum">14.</span>Are Baseboards Removed?</label>
+          <label><span class="qnum">15.</span>Are Baseboards Removed?</label>
           <div class="seg" data-seg="base">
             <button type="button" data-v="Yes">Yes</button>
             <button type="button" data-v="No">No</button>
@@ -435,7 +447,7 @@
     </section>
 
     <section class="card">
-      <h2><span class="qnum">15.</span>Room-by-Room Breakdown</h2>
+      <h2><span class="qnum">16.</span>Room-by-Room Breakdown</h2>
       <div class="hint" style="margin-top:-6px;margin-bottom:12px">Tap a room name to add it with one click, or use + Add Room for a custom name. Filled fields become narrative bullets under the room name &mdash; empty fields are omitted. Start typing in a field to see quick phrases.</div>
       <div class="room-tmpl" id="roomTemplates">
         <button type="button" data-v="Kitchen">Kitchen</button>
@@ -457,7 +469,7 @@
     <section class="card">
       <h2>Exterior</h2>
       <div class="field">
-        <label><span class="qnum">16.</span>Exterior Damage?</label>
+        <label><span class="qnum">17.</span>Exterior Damage?</label>
         <div class="seg" data-seg="extdmg">
           <button type="button" data-v="Yes">Yes</button>
           <button type="button" data-v="No">No</button>
@@ -465,11 +477,11 @@
       </div>
       <div class="cond" id="extBlock">
         <div class="field">
-          <label for="extDetails"><span class="qnum">17.</span>Exterior Damage Details</label>
+          <label for="extDetails"><span class="qnum">18.</span>Exterior Damage Details</label>
           <textarea id="extDetails" placeholder="One line per bullet. Describe all exterior damage and affected areas (roof, siding, gutters, fence, windows, etc.). Include what materials are damaged and visible conditions." data-k></textarea>
         </div>
         <div class="field">
-          <label><span class="qnum">18.</span>Additional specialist needed to inspect exterior?</label>
+          <label><span class="qnum">19.</span>Additional specialist needed to inspect exterior?</label>
           <div class="hint" style="margin-top:-2px;margin-bottom:8px">Examples: roofing, siding, structural engineer, crawlspace, foundation etc.</div>
           <div class="seg" data-seg="spec">
             <button type="button" data-v="Yes">Yes</button>
@@ -478,7 +490,7 @@
         </div>
         <div class="cond" id="specBlock">
           <div class="field">
-            <label><span class="qnum">18A.</span>Which specialist(s) are required? <span style="font-weight:500;color:var(--muted)">&mdash; select all that apply</span></label>
+            <label><span class="qnum">19A.</span>Which specialist(s) are required? <span style="font-weight:500;color:var(--muted)">&mdash; select all that apply</span></label>
             <div class="chips" data-chips="specs">
               <button type="button" data-v="Roofing Specialist">Roofing Specialist</button>
               <button type="button" data-v="Siding Specialist">Siding Specialist</button>
@@ -502,11 +514,11 @@
             </div>
           </div>
           <div class="field">
-            <label for="specReason"><span class="qnum">18B.</span>Why is this specialist needed?</label>
+            <label for="specReason"><span class="qnum">19B.</span>Why is this specialist needed?</label>
             <textarea id="specReason" placeholder="Example:&#10;Visible structural movement above the garage door. Recommend structural engineer evaluation before repairs.&#10;&#10;Possible wind damage to roofing and siding. Recommend licensed roofing contractor inspection." data-k></textarea>
           </div>
           <div class="field">
-            <label><span class="qnum">18C.</span>Referral Status</label>
+            <label><span class="qnum">19C.</span>Referral Status</label>
             <div class="seg seg-wide" data-seg="refstatus">
               <button type="button" data-v="Referral Required">Referral Required</button>
               <button type="button" data-v="Referral Submitted">Referral Submitted</button>
@@ -516,7 +528,7 @@
           </div>
         </div>
         <div class="field">
-          <label><span class="qnum">19.</span>Exterior Materials Affected <span style="font-weight:500;color:var(--muted)">&mdash; select all that apply</span></label>
+          <label><span class="qnum">20.</span>Exterior Materials Affected <span style="font-weight:500;color:var(--muted)">&mdash; select all that apply</span></label>
           <div class="chips" data-chips="extmat">
             <button type="button" data-v="Roofing">Roofing</button>
             <button type="button" data-v="Siding">Siding</button>
@@ -534,7 +546,7 @@
     <section class="card">
       <h2>Documentation</h2>
       <div class="field">
-        <label><span class="qnum">20.</span>Hover scan is completed</label>
+        <label><span class="qnum">21.</span>Hover scan is completed</label>
         <div class="seg" data-seg="hover">
           <button type="button" data-v="Yes">Yes</button>
           <button type="button" data-v="No">No</button>
@@ -543,19 +555,19 @@
         <input type="text" class="other-inline" id="hoverOther" placeholder="Other (optional)" data-k>
       </div>
       <div class="field">
-        <label for="mplink"><span class="qnum">21.</span>Post Demo Matterport Link</label>
+        <label for="mplink"><span class="qnum">22.</span>Post Demo Matterport Link</label>
         <input type="text" id="mplink" inputmode="url" placeholder="https://my.matterport.com/show/?m=..." data-k>
       </div>
       <div class="row2">
         <div class="field">
-          <label><span class="qnum">22.</span>Were Photos Uploaded?</label>
+          <label><span class="qnum">23.</span>Were Photos Uploaded?</label>
           <div class="seg" data-seg="photos">
             <button type="button" data-v="Yes">Yes</button>
             <button type="button" data-v="No">No</button>
           </div>
         </div>
         <div class="field">
-          <label><span class="qnum">23.</span>Was Itel Sample Collected?</label>
+          <label><span class="qnum">24.</span>Was Itel Sample Collected?</label>
           <div class="seg" data-seg="itel">
             <button type="button" data-v="Yes">Yes</button>
             <button type="button" data-v="No">No</button>
@@ -568,11 +580,11 @@
         <input type="text" id="itelDetails" placeholder="e.g. Carpet, pad, LVP samples are collected and sent off to Itel" data-k>
       </div>
       <div class="field">
-        <label for="tracking"><span class="qnum">24.</span>Tracking Number (if applicable)</label>
+        <label for="tracking"><span class="qnum">25.</span>Tracking Number (if applicable)</label>
         <input type="text" id="tracking" placeholder="Itel tracking # if applicable" data-k>
       </div>
       <div class="field">
-        <label><span class="qnum">25.</span>Customer Signed PA</label>
+        <label><span class="qnum">26.</span>Customer Signed PA</label>
         <div class="seg" data-seg="pa">
           <button type="button" data-v="Yes">Yes</button>
           <button type="button" data-v="No">No</button>
@@ -582,7 +594,7 @@
     </section>
 
     <section class="card">
-      <h2><span class="qnum">26.</span>Additional Notes</h2>
+      <h2><span class="qnum">27.</span>Additional Notes</h2>
       <div class="field">
         <textarea id="addl" placeholder="One line per bullet. Examples: homeowner concerns, active leaks, prior repairs, access limitations, homeowners additional contact information." data-k></textarea>
       </div>
@@ -634,6 +646,11 @@
   <option value="Hardwood flooring was not affected and was not removed."></option>
   <option value="Tile flooring was partially removed."></option>
 </datalist>
+<datalist id="dl-program">
+  <option value="TPA Program"></option>
+  <option value="Non-Program"></option>
+  <option value="N/A"></option>
+</datalist>
 <datalist id="dl-dw">
   <option value="Drywall and insulation was partially removed. Drywall thickness is 1/2 inch."></option>
   <option value="Drywall and insulation was partially removed. Drywall thickness is 5/8 inch."></option>
@@ -676,7 +693,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v17</footer>
+<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v23</footer>
 
 <script>
 (function(){
@@ -686,12 +703,12 @@
   var DRAFT_KEY  = "pdri_draft_v1";
   var MAILTO_SOFT_LIMIT = 1600;
 
-  var segState = { cont:"", drywall:"", ceiling:"", insul:"", cab:"", base:"",
+  var segState = { cont:"", walldw:"", ceildw:"", ceiling:"", insul:"", cab:"", base:"",
                    extdmg:"", spec:"", refstatus:"", hover:"", photos:"", itel:"", pa:"" };
   var chipState = { cause:[], floor:[], extmat:[], cabparts:[], specs:[] };
 
   var TEXT_IDS = ["tech","idate","fname","lname","job","program","causeOther","causeDesc",
-                  "floorOther","floorDetails","areas","drywallOther","extDetails","extmatOther",
+                  "floorOther","floorDetails","contDetails","areas","extDetails","extmatOther",
                   "hoverOther","mplink","itelDetails","tracking","addl","specOtherText","specReason"];
 
   /* ---------- Storage (works on the hosted page; silently skipped if unavailable) ---------- */
@@ -709,6 +726,7 @@
       b.classList.toggle("on", b.getAttribute("data-v") === val);
     });
     if(key === "extdmg") toggleExterior();
+    if(key === "cont") toggleContDetails();
     if(key === "cab") toggleCabParts();
     if(key === "spec") toggleSpecBlock();
   }
@@ -756,6 +774,12 @@
   function toggleCabParts(){
     if(segState.cab === "Yes") cabBlock.classList.add("show");
     else cabBlock.classList.remove("show");
+  }
+
+  var contCond = document.getElementById("contCond");
+  function toggleContDetails(){
+    if(segState.cont === "Yes") contCond.classList.add("show");
+    else contCond.classList.remove("show");
   }
 
   var specBlock = document.getElementById("specBlock");
@@ -875,6 +899,15 @@
   }
 
   /* ---------- Build note (styled like Marko's real inspection notes) ---------- */
+  /* Heading uses only real, non-empty values - never LAST/FIRST placeholders */
+  function customerHeading(){
+    var job = v("job") || "Job#";
+    var last = v("lname").toUpperCase();
+    var first = v("fname").toUpperCase();
+    var name = (last && first) ? (last + ", " + first) : (last || first);
+    return name ? (job + " - " + name) : job;
+  }
+
   function buildNote(){
     var plain = [];
     var html  = [];
@@ -899,22 +932,19 @@
     }
 
     /* ---- Header block ---- */
-    var last = v("lname").toUpperCase();
-    var first = v("fname").toUpperCase();
-    var nameLine = (v("job") || "Job#") + " - " + (last || "LAST") + ", " + (first || "FIRST");
-    boldRed(nameLine);
-    kv("Inspection Date", fmtDate(v("idate")));
-    kv("Program", v("program"));
-    kv("Customer Signed PA", segState.pa);
-    kv("Initial Pictures", segState.photos === "Yes" ? "Uploaded and ready for review" : (segState.photos === "No" ? "Not uploaded" : ""));
-    kv("Hover", v("hoverOther") || (segState.hover === "Yes" ? "Completed" : segState.hover === "No" ? "No" : segState.hover === "Not possible due to terrain" ? "N/A - not possible due to terrain" : ""));
+    boldRed(customerHeading());
+    kv("Inspection Date", fmtDate(v("idate")) || "Unknown");
+    kv("Program", v("program") || "Unknown");
+    kv("Customer Signed PA", segState.pa || "Unknown");
+    kv("Initial Pictures", segState.photos === "Yes" ? "Uploaded and ready for review" : (segState.photos === "No" ? "Not uploaded" : "Unknown"));
+    kv("Hover", v("hoverOther") || (segState.hover === "Yes" ? "Completed" : segState.hover === "No" ? "No" : segState.hover === "Not possible due to terrain" ? "N/A - not possible due to terrain" : "Unknown"));
     kv("Matterport Post-Demo", "");
     blank();
     raw(v("mplink"));
     blank();
-    kv("Itel", v("itelDetails") || segState.itel);
-    kv("Tracking Number", v("tracking"));
-    kv("Technician", v("tech"));
+    kv("Itel", v("itelDetails") || segState.itel || "Unknown");
+    kv("Tracking Number", v("tracking") || "N/A");
+    kv("Technician", v("tech") || "Unknown");
 
     /* ---- Cause of Loss ---- */
     sep();
@@ -942,15 +972,18 @@
     var fBullets = [];
     var fType = multi("floor","floorOther");
     if(fType) fBullets.push("Flooring type: " + fType + ".");
-    if(segState.cont === "Yes") fBullets.push("Flooring is one continuous installation throughout affected areas.");
-    if(segState.cont === "No") fBullets.push("Flooring is not continuous between affected areas.");
+    if(segState.cont === "Yes"){
+      fBullets.push("Flooring is continuous.");
+      fBullets = fBullets.concat(lines(v("contDetails")));
+    }
+    if(segState.cont === "No") fBullets.push("Flooring is not continuous.");
     fBullets = fBullets.concat(lines(v("floorDetails")));
     bulletLines(fBullets);
 
     /* ---- Interior summary ---- */
     var iBullets = [];
-    var dwt = v("drywallOther") || segState.drywall;
-    if(dwt) iBullets.push("Drywall thickness is " + dwt + ".");
+    if(segState.walldw) iBullets.push("Wall drywall thickness: " + segState.walldw + ".");
+    if(segState.ceildw) iBullets.push("Ceiling drywall thickness: " + segState.ceildw + ".");
     if(segState.ceiling) iBullets.push(segState.ceiling === "Yes" ? "Ceiling is affected." : "Ceiling is not affected.");
     if(segState.insul) iBullets.push(segState.insul === "Yes" ? "Insulation is affected." : "Insulation is not affected.");
     if(segState.cab === "Yes"){
@@ -1061,6 +1094,7 @@
     var data = storeGet();
     if(!data) return false;
     TEXT_IDS.forEach(function(id){ if(data.text && id in data.text) setV(id, data.text[id]); });
+    if(data.seg && data.seg.drywall && !data.seg.walldw) data.seg.walldw = data.seg.drywall;
     if(data.seg) for(var k in segState) setSeg(k, data.seg[k]);
     if(data.chips) for(var c in chipState) setChips(c, data.chips[c] || []);
     roomsEl.innerHTML = "";
@@ -1089,10 +1123,10 @@
     needSeg("photos","Were Photos Uploaded");
     needSeg("pa","Customer Signed PA");
     if(segState.extdmg === "Yes" && segState.spec === "Yes"){
-      needText("specReason","Why is this specialist needed (18B)");
+      needText("specReason","Why is this specialist needed (19B)");
       if(chipState.specs.indexOf("Other") !== -1 && !v("specOtherText")){
         document.getElementById("specOtherText").classList.add("invalid");
-        missing.push("Other specialist name (18A)");
+        missing.push("Other specialist name (19A)");
       }
     }
     var hasRoom = false;
@@ -1201,7 +1235,27 @@
     }
   }
 
+  function hardRequired(){
+    var hard = [];
+    if(!v("job")){ document.getElementById("job").classList.add("invalid"); hard.push("Job ID # in Dash"); }
+    if(!v("fname") && !v("lname")){
+      document.getElementById("fname").classList.add("invalid");
+      document.getElementById("lname").classList.add("invalid");
+      hard.push("Customer name (first or last)");
+    }
+    return hard;
+  }
+
   function sendToDash(){
+    var hard = hardRequired();
+    if(hard.length){
+      showToast(
+        "<b>Required before sending</b> - the email will not open without:<ul><li>" + hard.join("</li><li>") + "</li></ul>",
+        [ {label:"OK", primary:true, fn:null} ],
+        true
+      );
+      return;
+    }
     var missing = validate();
     if(missing.length){
       showToast(
@@ -1307,6 +1361,7 @@
   toggleCabParts();
   toggleSpecBlock();
   toggleSpecOther();
+  toggleContDetails();
   render();
 
   /* ---------- PWA service worker (only on a real server, e.g. GitHub Pages) ---------- */
