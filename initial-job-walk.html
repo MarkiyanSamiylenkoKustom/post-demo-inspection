@@ -165,7 +165,7 @@
   .nav-link:active{color:#fff}
 
   /* Safety: never allow sideways scroll */
-  html,body{overflow-x:clip}
+  @media screen{ html,body{overflow-x:clip} }
 
   /* ---------- Preview ---------- */
   .preview-card{background:var(--navy);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;min-height:200px}
@@ -231,20 +231,24 @@
 
   /* ---------- Print sheet ---------- */
   #printSheet{display:none}
+  @page{ size:letter; margin:14mm 13mm; }
   @media print{
-    body{background:#fff}
+    html,body{width:auto;overflow:visible !important}
+    body{background:#fff;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .masthead,.wrap,.mobile-bar,.drawer,.toast,footer{display:none !important}
-    #printSheet{display:block;padding:0;color:#000}
+    #printSheet{display:block;width:100%;max-width:100%;box-sizing:border-box;padding:0;color:#000;overflow:visible}
     #printSheet .p-head{
-      display:flex;justify-content:space-between;align-items:baseline;
+      display:flex;justify-content:space-between;align-items:baseline;gap:10mm;flex-wrap:wrap;
       border-bottom:3px solid #1A1A1A;padding-bottom:8px;margin-bottom:14px;
     }
     #printSheet .p-brand{font-weight:800;letter-spacing:.2em;font-size:13pt;color:#1A1A1A}
     #printSheet .p-sub{font-size:7.5pt;color:#444;letter-spacing:.06em;text-transform:uppercase}
-    #printSheet .p-title{font-size:9pt;font-weight:700;color:#1A1A1A;text-transform:uppercase;letter-spacing:.1em}
+    #printSheet .p-title{white-space:nowrap;font-size:9pt;font-weight:700;color:#1A1A1A;text-transform:uppercase;letter-spacing:.1em}
     #printSheet .p-note{
       font-family:ui-monospace,Menlo,Consolas,'Courier New',monospace;
-      font-size:9.5pt;line-height:1.55;white-space:pre-wrap;word-break:break-word;
+      font-size:9pt;line-height:1.5;white-space:pre-wrap;
+      word-break:break-word;overflow-wrap:anywhere;
+      max-width:100%;orphans:3;widows:3;
     }
     #printSheet .p-note b{color:#1A1A1A}
     #printSheet .p-foot{margin-top:16px;border-top:1px solid #bbb;padding-top:6px;font-size:7pt;color:#666}
@@ -464,7 +468,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; INITIAL JOB WALK &middot; INTERNAL TOOL &middot; v17</footer>
+<footer>KUSTOM US &middot; INITIAL JOB WALK &middot; INTERNAL TOOL &middot; v18</footer>
 
 <script>
 (function(){
