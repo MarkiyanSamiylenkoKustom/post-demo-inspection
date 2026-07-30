@@ -286,6 +286,38 @@
              background:var(--blue);color:#fff;border:none;cursor:pointer;white-space:nowrap}
   .hist-empty{color:#9FB3C8;font-size:.8rem;padding:22px 16px;text-align:center}
 </style>
+<style>
+  /* ---- Small-screen hardening: nothing may exceed the viewport ---- */
+  @media screen{
+    *,*::before,*::after{min-width:0}
+    .wrap,.form-col,.preview-col,.card,.preview-card,.hub-wrap,.hub-card{max-width:100%}
+    input,textarea,select,button{max-width:100%;box-sizing:border-box}
+    pre#preview,#previewMobile{max-width:100%;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+    .preview-bar{flex-wrap:wrap;gap:6px}
+    .seg{max-width:100%}
+    .seg button{white-space:normal}
+    .chips button,.party-chips button,.wi-party button{white-space:normal;text-align:left}
+    .hist-item{flex-wrap:wrap}
+  }
+  @media screen and (max-width:430px){
+    .wrap{padding-left:12px;padding-right:12px}
+    .card{padding:18px 14px}
+    .actions{grid-template-columns:1fr}
+    .btn{padding:14px 12px}
+    .seg button{padding:11px 13px;font-size:.78rem}
+    .chips button,.party-chips button,.wi-party button{font-size:.73rem;padding:8px 12px}
+    pre#preview,#previewMobile{font-size:.72rem;padding:14px 12px}
+    .preview-bar{font-size:.68rem;padding:10px 12px}
+    .mobile-bar{gap:6px;padding:8px 10px}
+    .mobile-bar .btn{font-size:.8rem;padding:12px 6px}
+    label{overflow-wrap:anywhere}
+  }
+  @media screen and (max-width:360px){
+    .row2{grid-template-columns:1fr !important}
+    .seg-wide{grid-template-columns:1fr !important}
+    pre#preview,#previewMobile{font-size:.68rem}
+  }
+</style>
 </head>
 <body>
 
@@ -728,7 +760,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v26</footer>
+<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v28</footer>
 
 <script>
 (function(){
@@ -1086,7 +1118,12 @@
       var r = readRoom(card);
       var rb = [];
       ROOM_FIELDS.forEach(function(f){
-        if(r[f[1]]) rb.push(r[f[1]]);
+        var val = r[f[1]];
+        if(!val) return;
+        /* Avoid "Ceiling: Ceiling not affected." when the value already names the field */
+        var head = val.slice(0, f[0].length).toLowerCase();
+        if(head === f[0].toLowerCase()) rb.push(val);
+        else rb.push(f[0] + ": " + val);
       });
       if(!r.name && !rb.length) return;
       sep();
