@@ -289,6 +289,16 @@
     display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
     color:var(--blue);margin-bottom:8px;
   }
+  .hub-phase{
+    font-size:.78rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink);margin:14px 0 -4px;padding-bottom:8px;border-bottom:2px solid var(--blue);
+    display:flex;align-items:center;gap:10px;
+  }
+  .hub-phase:first-child{margin-top:0}
+  .hub-phase .n{
+    font-size:.66rem;font-weight:800;color:#fff;background:var(--blue);
+    border-radius:999px;padding:3px 9px;letter-spacing:.06em;
+  }
   .hub-note{
     background:#FBFAF7;border:1px solid var(--line);border-radius:10px;padding:16px;
     font-size:.8rem;color:var(--muted);line-height:1.6;margin-top:6px;
@@ -340,26 +350,28 @@
 
 <div class="hub-wrap">
 
+  <div class="hub-phase"><span class="n">1</span>Mitigation</div>
+
   <a class="hub-card" href="scope-sheet.html">
-    <span class="hub-step">Mitigation</span>
     <div class="hub-title">Mitigation Scope Sheet</div>
     <div class="hub-desc">Loss category and class, source, then a full room-by-room scope: baseboard, walls, ceiling, flooring, cabinets, plumbing, appliances, crawlspace and misc items.</div>
   </a>
 
+  <div class="hub-phase"><span class="n">2</span>Pre-Production</div>
+
   <a class="hub-card" href="index.html">
-    <span class="hub-step">Pre-Production</span>
     <div class="hub-title">Post-Demo Rebuild Inspection</div>
     <div class="hub-desc">Full scope inspection: cause of loss, flooring, drywall, room-by-room damage, exterior and documentation status.</div>
   </a>
 
+  <div class="hub-phase"><span class="n">3</span>Production</div>
+
   <a class="hub-card" href="initial-job-walk.html">
-    <span class="hub-step">Production</span>
     <div class="hub-title">Initial Job Walk</div>
     <div class="hub-desc">Agreements, deposit, authorization, supplements, change orders, material selections and the plan of action. Builds an outstanding-items checklist automatically.</div>
   </a>
 
   <a class="hub-card" href="weekly-project-update.html">
-    <span class="hub-step">Production</span>
     <div class="hub-title">Weekly Project Update</div>
     <div class="hub-desc">Work completed and upcoming with responsible parties, open items, schedule changes, billing status and overall progress.</div>
   </a>
@@ -371,7 +383,7 @@
 
 </div>
 
-<footer>KUSTOM US &middot; FIELD DOCUMENTATION TOOLS &middot; INTERNAL &middot; v6</footer>
+<footer>KUSTOM US &middot; FIELD DOCUMENTATION TOOLS &middot; INTERNAL &middot; v7</footer>
 
 <script>
 (function(){

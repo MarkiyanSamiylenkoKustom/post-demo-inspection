@@ -276,8 +276,8 @@
   .party-chips button.on{background:var(--navy);border-color:var(--navy);color:#fff}
 </style>
 <style>
-  .seg-wrap{display:flex;flex-wrap:wrap;width:100%;gap:0}
-  .seg-wrap button{flex:0 1 auto;border-bottom:1px solid var(--line)}
+  .seg-wrap{display:flex;flex-wrap:wrap;width:max-content;max-width:100%;gap:0}
+  .seg-wrap button{flex:0 1 auto;border-bottom:1px solid var(--line);margin-bottom:-1px}
   .rgroup{border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
   .rgroup:first-of-type{border-top:none;margin-top:0;padding-top:0}
   .rgroup-title{
@@ -473,6 +473,23 @@
   </div>
 </div>
 
+<datalist id="dl-rooms">
+  <option value="Kitchen"></option>
+  <option value="Living Room"></option>
+  <option value="Dining Room"></option>
+  <option value="Hallway"></option>
+  <option value="Laundry Room"></option>
+  <option value="Master Bedroom"></option>
+  <option value="Bedroom 1"></option>
+  <option value="Bedroom 2"></option>
+  <option value="Master Bathroom"></option>
+  <option value="Guest Bathroom"></option>
+  <option value="Half Bath"></option>
+  <option value="Garage"></option>
+  <option value="Crawlspace"></option>
+  <option value="Attic"></option>
+</datalist>
+
 <div class="toast" id="toast" role="alert"></div>
 
 <div id="printSheet" aria-hidden="true">
@@ -487,7 +504,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; MITIGATION SCOPE SHEET &middot; INTERNAL TOOL &middot; v1</footer>
+<footer>KUSTOM US &middot; MITIGATION SCOPE SHEET &middot; INTERNAL TOOL &middot; v2</footer>
 
 <script>
 (function(){
@@ -515,16 +532,18 @@
      ty: seg (single) | chips (multi) | text | num | ta
      w : visibility predicate over the room object                       */
   function yes(k){ return function(r){ return r[k] === "Yes"; }; }
+  function isCrawl(r){ return r.csq === "Crawlspace" || r.csq === "Attic"; }
+  function notCrawl(r){ return !isCrawl(r); }
 
   var ROOM_GROUPS = [
     { t:"Room", f:[
       {k:"name",  l:"Room name", ty:"text", ph:"e.g. Master Bathroom"},
-      {k:"csq",   l:"Is this room a crawlspace or attic?", ty:"seg", o:["No","Yes"]},
-      {k:"cpa",   l:"Cabinets, Plumbing &/or Appliances in this room?", ty:"seg",
+      {k:"csq",   l:"Is this room a crawlspace or attic?", ty:"seg", o:["No","Crawlspace","Attic"]},
+      {k:"cpa",   l:"Cabinets, Plumbing &/or Appliances in this room?", ty:"seg", w:function(r){ return !isCrawl(r); },
                   o:["No","Cabinets","Plumbing","Appliances","Cabinets & Plumbing","Cabinets & Appliances","Plumbing & Appliances","Cabinets, Plumbing & Appliances"]}
     ]},
 
-    { t:"Baseboard / Trim", f:[
+    { t:"Baseboard / Trim", w:notCrawl, f:[
       {k:"bb",     l:"Is baseboard affected in this room?", ty:"seg", o:["Yes","No"]},
       {k:"bbLf",   l:"How many LF affected?", ty:"num", w:yes("bb")},
       {k:"bbKind", l:"What kind of baseboard is affected?", ty:"seg", o:["MDF / Particle board","Wood","Cove Base"], w:yes("bb")},
@@ -538,7 +557,7 @@
       {k:"qrSalv", l:"Will it be salvaged?", ty:"seg", o:["Yes","No"], w:yes("qr")}
     ]},
 
-    { t:"Walls", f:[
+    { t:"Walls", w:notCrawl, f:[
       {k:"wl",      l:"Are walls affected?", ty:"seg", o:["Yes","No"]},
       {k:"wlMat",   l:"What material are the walls?", ty:"seg", o:["Drywall","Plaster","Other"], w:yes("wl")},
       {k:"wlMatOther", l:"Other wall material", ty:"text", w:function(r){ return r.wl==="Yes" && r.wlMat==="Other"; }},
@@ -551,7 +570,7 @@
       {k:"wlHoleN", l:"How many holes need to be drilled?", ty:"num", w:function(r){ return r.wl==="Yes" && r.wlHoles==="Yes"; }}
     ]},
 
-    { t:"Ceiling", f:[
+    { t:"Ceiling", w:notCrawl, f:[
       {k:"cl",       l:"Is ceiling affected?", ty:"seg", o:["Yes","No"]},
       {k:"clMat",    l:"What material is the ceiling?", ty:"seg", o:["Drywall","Plaster","Acoustic Ceiling Tile","Multi layer drop","Other"], w:yes("cl")},
       {k:"clMatOther", l:"Other ceiling material", ty:"text", w:function(r){ return r.cl==="Yes" && r.clMat==="Other"; }},
@@ -561,7 +580,7 @@
       {k:"clDemoSf", l:"How many SF?", ty:"num", w:function(r){ return r.cl==="Yes" && r.clDemo==="Yes"; }}
     ]},
 
-    { t:"Flooring", f:[
+    { t:"Flooring", w:notCrawl, f:[
       {k:"fl",       l:"Is the floor affected?", ty:"seg", o:["Yes","No"]},
       {k:"flMat",    l:"What material is the flooring?", ty:"seg", o:["Carpet & Pad","Carpet tile","Vinyl","LVP (Luxury Vinyl Plank)","Laminate","Hardwood","Engineered Hardwood","Tile","Other"], w:yes("fl")},
       {k:"flMatOther", l:"Other flooring material", ty:"text", w:function(r){ return r.fl==="Yes" && r.flMat==="Other"; }},
@@ -570,39 +589,49 @@
       {k:"flExtSf",  l:"How much extraction in SF?", ty:"num", w:function(r){ return r.fl==="Yes" && r.flExt==="Yes"; }},
       {k:"flUnd",    l:"Is there an underlay?", ty:"seg", o:["Yes","No"], w:yes("fl")},
       {k:"flUndMat", l:"What material is the underlay?", ty:"seg", o:["Particle board","Hardie board","Plywood","Other"], w:function(r){ return r.fl==="Yes" && r.flUnd==="Yes"; }},
+      {k:"flUndMatOther", l:"Other underlay material", ty:"text", w:function(r){ return r.flUndMat === "Other"; }},
       {k:"flDemo",   l:"Will we be demoing flooring?", ty:"seg", o:["Yes","No"], w:yes("fl")},
       {k:"flDemoSf", l:"How many SF?", ty:"num", w:function(r){ return r.fl==="Yes" && r.flDemo==="Yes"; }},
-      {k:"flSub",    l:"What material is the subfloor?", ty:"seg", o:["Plywood","Wood Plank","Gyp-Crete","Particle Board","Concrete","Other"], w:yes("fl")}
+      {k:"flSub",    l:"What material is the subfloor?", ty:"seg", o:["Plywood","Wood Plank","Gyp-Crete","Particle Board","Concrete","Other"], w:yes("fl")},
+      {k:"flSubOther", l:"Other subfloor material", ty:"text", w:function(r){ return r.flSub === "Other"; }},
     ]},
 
-    { t:"Cabinets", w:function(r){ return /Cabinets/.test(r.cpa || ""); }, f:[
+    { t:"Cabinets", w:function(r){ return notCrawl(r) && /Cabinets/.test(r.cpa || ""); }, f:[
       {k:"cb",       l:"Are cabinets affected?", ty:"seg", o:["Yes","No"]},
       {k:"cbWhich",  l:"What cabinets are affected?", ty:"seg", o:["Lower","Upper","Full Height","Lower & Upper","Lower, Upper, Full Height"], w:yes("cb")},
       {k:"cbLowLf",  l:"How many LF affected (Lower)?", ty:"num", w:function(r){ return r.cb==="Yes" && /Lower/.test(r.cbWhich||""); }},
       {k:"cbUpLf",   l:"How many LF affected (Upper)?", ty:"num", w:function(r){ return r.cb==="Yes" && /Upper/.test(r.cbWhich||""); }},
       {k:"cbFullLf", l:"How many LF affected (Full Height)?", ty:"num", w:function(r){ return r.cb==="Yes" && /Full Height/.test(r.cbWhich||""); }},
       {k:"cbTop",    l:"What material is the countertop?", ty:"seg", o:["Laminate","Tile","Stone","Other"], w:yes("cb")},
+      {k:"cbTopOther", l:"Other countertop material", ty:"text", w:function(r){ return r.cbTop === "Other"; }},
       {k:"cbSplash", l:"What material is the backsplash?", ty:"seg", o:["Laminate","Laminate attached to countertop","Tile","Stone","Other"], w:yes("cb")},
+      {k:"cbSplashOther", l:"Other backsplash material", ty:"text", w:function(r){ return r.cbSplash === "Other"; }},
       {k:"cbBoxes",  l:"What material are the boxes?", ty:"seg", o:["Particle board","Plywood","Wood","Other"], w:yes("cb")},
+      {k:"cbBoxesOther", l:"Other box material", ty:"text", w:function(r){ return r.cbBoxes === "Other"; }},
       {k:"cbDetach", l:"Do cabinets need to be detached?", ty:"seg", o:["Yes","No"], w:yes("cb")},
       {k:"cbShore",  l:"Will we be attempting to shore the cabinets?", ty:"seg", o:["Yes","No"], w:yes("cb")},
-      {k:"cbSalv",   l:"Do they seem salvageable?", ty:"seg", o:["Countertop","Boxes","No","Other"], w:yes("cb")}
+      {k:"cbSalv",   l:"Do they seem salvageable?", ty:"seg", o:["Countertop","Boxes","No","Other"], w:yes("cb")},
+      {k:"cbSalvOther", l:"Salvage details", ty:"text", w:function(r){ return r.cbSalv === "Other"; }},
     ]},
 
-    { t:"Plumbing", w:function(r){ return /Plumbing/.test(r.cpa || ""); }, f:[
+    { t:"Plumbing", w:function(r){ return notCrawl(r) && /Plumbing/.test(r.cpa || ""); }, f:[
       {k:"pbSink",   l:"Will sinks need to be detached?", ty:"seg", o:["Yes","No"]},
       {k:"pbSinkN",  l:"How many sinks?", ty:"num", w:yes("pbSink")},
       {k:"pbDisp",   l:"Is there a garbage disposal?", ty:"seg", o:["Yes","No"]},
       {k:"pbToilet", l:"Will a toilet need to be detached?", ty:"seg", o:["Yes","No"]},
       {k:"pbTub",    l:"Will a tub need to be detached?", ty:"seg", o:["Yes","No"]},
       {k:"pbTubMat", l:"What material is the tub?", ty:"seg", o:["Fiberglass","Metal","Other"], w:yes("pbTub")},
+      {k:"pbTubMatOther", l:"Other tub material", ty:"text", w:function(r){ return r.pbTubMat === "Other"; }},
       {k:"pbTubSur", l:"What material is the tub surround?", ty:"seg", o:["Laminate","Fiberglass","Tile","Other"], w:yes("pbTub")},
+      {k:"pbTubSurOther", l:"Other tub surround material", ty:"text", w:function(r){ return r.pbTubSur === "Other"; }},
       {k:"pbShow",   l:"Will a shower need to be detached?", ty:"seg", o:["Yes","No"]},
       {k:"pbShowPan",l:"What material is the shower pan?", ty:"seg", o:["Fiberglass","Tile","Other"], w:yes("pbShow")},
-      {k:"pbShowSur",l:"What material is the shower surround?", ty:"seg", o:["Laminate","Fiberglass","Tile","Other"], w:yes("pbShow")}
+      {k:"pbShowPanOther", l:"Other shower pan material", ty:"text", w:function(r){ return r.pbShowPan === "Other"; }},
+      {k:"pbShowSur",l:"What material is the shower surround?", ty:"seg", o:["Laminate","Fiberglass","Tile","Other"], w:yes("pbShow")},
+      {k:"pbShowSurOther", l:"Other shower surround material", ty:"text", w:function(r){ return r.pbShowSur === "Other"; }},
     ]},
 
-    { t:"Appliances", w:function(r){ return /Appliances/.test(r.cpa || ""); }, f:[
+    { t:"Appliances", w:function(r){ return notCrawl(r) && /Appliances/.test(r.cpa || ""); }, f:[
       {k:"apMove",   l:"Will any appliance need to be moved for mitigation?", ty:"seg", o:["Yes","No"]},
       {k:"apMoveWhich", l:"What appliances need to be moved?", ty:"chips",
                      o:["Refrigerator","Dish Washer","Range","Cooktop","Oven","Range Hood","Washer","Dryer","Water Heater","Other"], w:yes("apMove")},
@@ -612,8 +641,7 @@
       {k:"apDetail", l:"Additional detail about damages", ty:"ta", w:yes("apDmg")}
     ]},
 
-    { t:"Crawlspace & Attic", w:function(r){ return r.csq === "Yes"; }, f:[
-      {k:"csType",   l:"Is this room a crawlspace or attic affected?", ty:"seg", o:["Crawlspace","Attic","No"]},
+    { t:"Crawlspace & Attic", w:isCrawl, f:[
       {k:"csInsul",  l:"Is insulation affected?", ty:"seg", o:["Yes","No"]},
       {k:"csInsulSf",l:"How many SF of insulation is affected?", ty:"num", w:yes("csInsul")},
       {k:"csFlex",   l:"Is flex ducting affected?", ty:"seg", o:["Yes","No"]},
@@ -691,7 +719,7 @@
     var head = document.createElement("div");
     head.className = "room-head";
     head.innerHTML =
-      '<input type="text" class="room-name" placeholder="Room name, e.g. Master Bathroom">' +
+      '<input type="text" class="room-name" list="dl-rooms" placeholder="Room name, e.g. Master Bathroom">' +
       '<button type="button" class="btn-mini btn-dup" title="Duplicate">Copy</button>' +
       '<button type="button" class="btn-x" aria-label="Remove">&times;</button>';
     card.appendChild(head);
@@ -700,6 +728,12 @@
     nameInput.value = card._state.name || "";
     nameInput.addEventListener("input", function(){
       card._state.name = nameInput.value;
+      /* Picking Crawlspace/Attic as the room name answers the question automatically */
+      var nm = nameInput.value.toLowerCase();
+      if(!card._state.csq || card._state.csq === "No"){
+        if(nm.indexOf("crawl") !== -1) setRoomSeg(card, "csq", "Crawlspace");
+        else if(nm.indexOf("attic") !== -1) setRoomSeg(card, "csq", "Attic");
+      }
       refresh(); saveDraft();
     });
     head.querySelector(".btn-x").addEventListener("click", function(){
@@ -796,6 +830,16 @@
     return card;
   }
 
+  function setRoomSeg(card, key, val){
+    card._state[key] = val;
+    card.querySelectorAll(".rfield").forEach(function(fw){
+      if(fw._field.k !== key) return;
+      fw.querySelectorAll(".seg button").forEach(function(b){
+        b.classList.toggle("on", b.getAttribute("data-v") === val);
+      });
+    });
+  }
+
   function applyVisibility(card){
     var r = card._state;
     card.querySelectorAll(".rgroup").forEach(function(g){
@@ -873,6 +917,14 @@
           var val = r[f.k];
           if(Array.isArray(val)) val = val.join(", ");
           if(!val || !String(val).trim()) return;
+          /* "Other" merges with its specify box into a single readable line */
+          if(/Other$/.test(f.k)){
+            var baseKey = f.k.slice(0, -5);
+            if(r[baseKey] === "Other") return;
+          }
+          if(val === "Other" && r[f.k + "Other"] && String(r[f.k + "Other"]).trim()){
+            val = String(r[f.k + "Other"]).trim();
+          }
           rows.push(f.l.replace(/\?$/, "") + ": " + String(val).trim());
         });
         if(!rows.length) return;
@@ -931,7 +983,11 @@
     LOSS_TEXT.forEach(function(id){ if(data.text && id in data.text) setV(id, data.text[id]); });
     if(data.lseg) for(var k in lossSeg) setLossSeg(k, data.lseg[k]);
     roomsBox.innerHTML = "";
-    if(data.rooms && data.rooms.length) data.rooms.forEach(function(r){ addRoom(r); });
+    if(data.rooms && data.rooms.length) data.rooms.forEach(function(r){
+      /* Migration: csq used to be Yes/No with a separate type question */
+      if(r.csq === "Yes") r.csq = (r.csType === "Attic") ? "Attic" : "Crawlspace";
+      addRoom(r);
+    });
     else addRoom();
     return true;
   }
