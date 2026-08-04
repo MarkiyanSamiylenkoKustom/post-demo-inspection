@@ -276,8 +276,15 @@
   .party-chips button.on{background:var(--navy);border-color:var(--navy);color:#fff}
 </style>
 <style>
-  .seg-wrap{display:flex;flex-wrap:wrap;width:max-content;max-width:100%;gap:0}
-  .seg-wrap button{flex:0 1 auto;border-bottom:1px solid var(--line);margin-bottom:-1px}
+  /* Multi-option single-selects render as pills - wrapped joined segments look broken */
+  .seg-wrap{display:flex;flex-wrap:wrap;gap:8px;width:auto;max-width:100%;
+            border:none;border-radius:0;overflow:visible;background:transparent}
+  .seg-wrap button{
+    flex:0 1 auto;border:1px solid var(--line);border-radius:999px;background:#fff;
+    padding:10px 16px;margin:0;color:var(--muted);font-weight:600;
+  }
+  .seg-wrap button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+  .seg-wrap button:active{transform:scale(.97)}
   .rgroup{border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
   .rgroup:first-of-type{border-top:none;margin-top:0;padding-top:0}
   .rgroup-title{
@@ -504,7 +511,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; MITIGATION SCOPE SHEET &middot; INTERNAL TOOL &middot; v2</footer>
+<footer>KUSTOM US &middot; MITIGATION SCOPE SHEET &middot; INTERNAL TOOL &middot; v5</footer>
 
 <script>
 (function(){
@@ -539,8 +546,8 @@
     { t:"Room", f:[
       {k:"name",  l:"Room name", ty:"text", ph:"e.g. Master Bathroom"},
       {k:"csq",   l:"Is this room a crawlspace or attic?", ty:"seg", o:["No","Crawlspace","Attic"]},
-      {k:"cpa",   l:"Cabinets, Plumbing &/or Appliances in this room?", ty:"seg", w:function(r){ return !isCrawl(r); },
-                  o:["No","Cabinets","Plumbing","Appliances","Cabinets & Plumbing","Cabinets & Appliances","Plumbing & Appliances","Cabinets, Plumbing & Appliances"]}
+      {k:"cpa",   l:"Cabinets, Plumbing &/or Appliances in this room?", ty:"chips", w:function(r){ return !isCrawl(r); },
+                  o:["Cabinets","Plumbing","Appliances"]}
     ]},
 
     { t:"Baseboard / Trim", w:notCrawl, f:[
@@ -584,6 +591,8 @@
       {k:"fl",       l:"Is the floor affected?", ty:"seg", o:["Yes","No"]},
       {k:"flMat",    l:"What material is the flooring?", ty:"seg", o:["Carpet & Pad","Carpet tile","Vinyl","LVP (Luxury Vinyl Plank)","Laminate","Hardwood","Engineered Hardwood","Tile","Other"], w:yes("fl")},
       {k:"flMatOther", l:"Other flooring material", ty:"text", w:function(r){ return r.fl==="Yes" && r.flMat==="Other"; }},
+      {k:"itel",     l:"Was an Itel sample taken?", ty:"seg", o:["Yes","No","Sample left on site"], w:yes("fl")},
+      {k:"itelTrack",l:"Itel tracking number", ty:"text", ph:"Tracking # from the Itel shipment", w:function(r){ return r.fl==="Yes" && r.itel==="Yes"; }},
       {k:"flSf",     l:"How many SF affected?", ty:"num", w:yes("fl")},
       {k:"flExt",    l:"Will we be extracting water?", ty:"seg", o:["Yes","No"], w:yes("fl")},
       {k:"flExtSf",  l:"How much extraction in SF?", ty:"num", w:function(r){ return r.fl==="Yes" && r.flExt==="Yes"; }},
@@ -986,6 +995,9 @@
     if(data.rooms && data.rooms.length) data.rooms.forEach(function(r){
       /* Migration: csq used to be Yes/No with a separate type question */
       if(r.csq === "Yes") r.csq = (r.csType === "Attic") ? "Attic" : "Crawlspace";
+      if(typeof r.cpa === "string"){
+        r.cpa = ["Cabinets","Plumbing","Appliances"].filter(function(x){ return r.cpa.indexOf(x) !== -1; });
+      }
       addRoom(r);
     });
     else addRoom();
