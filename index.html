@@ -318,6 +318,19 @@
     pre#preview,#previewMobile{font-size:.68rem}
   }
 </style>
+<style>
+  /* Segments with 3+ options render as pills - a joined frame wraps badly on phones */
+  .seg.seg-pills{
+    display:flex;flex-wrap:wrap;gap:8px;width:auto;max-width:100%;
+    border:none !important;border-radius:0;overflow:visible;background:transparent;
+  }
+  .seg.seg-pills button{
+    flex:0 1 auto;border:1px solid var(--line) !important;border-radius:999px;background:#fff;
+    padding:11px 17px;margin:0;color:var(--muted);font-weight:600;
+  }
+  .seg.seg-pills button.on{background:var(--navy);border-color:var(--navy) !important;color:#fff}
+  .seg.seg-pills button:active{transform:scale(.97)}
+</style>
 </head>
 <body>
 
@@ -436,7 +449,7 @@
       </div>
       <div class="field">
         <label><span class="qnum">10.</span>Wall Drywall Thickness</label>
-        <div class="seg" data-seg="walldw">
+        <div class="seg seg-pills" data-seg="walldw">
           <button type="button" data-v="1/2 inch">1/2 inch</button>
           <button type="button" data-v="5/8 inch">5/8 inch</button>
           <button type="button" data-v="Double layer">Double layer</button>
@@ -445,7 +458,7 @@
       </div>
       <div class="field">
         <label><span class="qnum">11.</span>Ceiling Drywall Thickness</label>
-        <div class="seg" data-seg="ceildw">
+        <div class="seg seg-pills" data-seg="ceildw">
           <button type="button" data-v="1/2 inch">1/2 inch</button>
           <button type="button" data-v="5/8 inch">5/8 inch</button>
           <button type="button" data-v="Double layer">Double layer</button>
@@ -478,7 +491,7 @@
         </div>
         <div class="field">
           <label><span class="qnum">15.</span>Are Baseboards Removed?</label>
-          <div class="seg" data-seg="base">
+          <div class="seg seg-pills" data-seg="base">
             <button type="button" data-v="Yes">Yes</button>
             <button type="button" data-v="No">No</button>
             <button type="button" data-v="Partially">Partially</button>
@@ -575,7 +588,7 @@
           </div>
           <div class="field">
             <label><span class="qnum">19C.</span>Referral Status</label>
-            <div class="seg seg-wide" data-seg="refstatus">
+            <div class="seg seg-wide seg-pills" data-seg="refstatus">
               <button type="button" data-v="Referral Required">Referral Required</button>
               <button type="button" data-v="Referral Submitted">Referral Submitted</button>
               <button type="button" data-v="Already Inspected">Already Inspected</button>
@@ -603,7 +616,7 @@
       <h2>Documentation</h2>
       <div class="field">
         <label><span class="qnum">21.</span>Hover scan is completed</label>
-        <div class="seg" data-seg="hover">
+        <div class="seg seg-pills" data-seg="hover">
           <button type="button" data-v="Yes">Yes</button>
           <button type="button" data-v="No">No</button>
           <button type="button" data-v="Not possible due to terrain">Not possible due to terrain</button>
@@ -624,7 +637,7 @@
         </div>
         <div class="field">
           <label><span class="qnum">24.</span>Was Itel Sample Collected?</label>
-          <div class="seg" data-seg="itel">
+          <div class="seg seg-pills" data-seg="itel">
             <button type="button" data-v="Yes">Yes</button>
             <button type="button" data-v="No">No</button>
             <button type="button" data-v="N/A">N/A</button>
@@ -641,7 +654,7 @@
       </div>
       <div class="field">
         <label><span class="qnum">26.</span>Customer Signed PA</label>
-        <div class="seg" data-seg="pa">
+        <div class="seg seg-pills" data-seg="pa">
           <button type="button" data-v="Yes">Yes</button>
           <button type="button" data-v="No">No</button>
           <button type="button" data-v="Pending/ HO was not available during inspection">Pending / HO N/A</button>
@@ -761,7 +774,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v30</footer>
+<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v31</footer>
 
 <script>
 (function(){
@@ -802,7 +815,9 @@
     var key = seg.getAttribute("data-seg");
     seg.querySelectorAll("button").forEach(function(btn){
       btn.addEventListener("click", function(){
-        setSeg(key, btn.getAttribute("data-v"));
+        /* Tapping the selected option again clears it - fixes mis-taps */
+        var val = btn.getAttribute("data-v");
+        setSeg(key, segState[key] === val ? "" : val);
         render(); saveDraft();
       });
     });

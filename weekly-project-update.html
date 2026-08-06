@@ -328,6 +328,19 @@
     pre#preview,#previewMobile{font-size:.68rem}
   }
 </style>
+<style>
+  /* Segments with 3+ options render as pills - a joined frame wraps badly on phones */
+  .seg.seg-pills{
+    display:flex;flex-wrap:wrap;gap:8px;width:auto;max-width:100%;
+    border:none !important;border-radius:0;overflow:visible;background:transparent;
+  }
+  .seg.seg-pills button{
+    flex:0 1 auto;border:1px solid var(--line) !important;border-radius:999px;background:#fff;
+    padding:11px 17px;margin:0;color:var(--muted);font-weight:600;
+  }
+  .seg.seg-pills button.on{background:var(--navy);border-color:var(--navy) !important;color:#fff}
+  .seg.seg-pills button:active{transform:scale(.97)}
+</style>
 </head>
 <body>
 
@@ -476,7 +489,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v13</footer>
+<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v14</footer>
 
 <script>
 (function(){

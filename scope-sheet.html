@@ -277,14 +277,14 @@
 </style>
 <style>
   /* Multi-option single-selects render as pills - wrapped joined segments look broken */
-  .seg-wrap{display:flex;flex-wrap:wrap;gap:8px;width:auto;max-width:100%;
-            border:none;border-radius:0;overflow:visible;background:transparent}
-  .seg-wrap button{
-    flex:0 1 auto;border:1px solid var(--line);border-radius:999px;background:#fff;
+  .seg.seg-wrap{display:flex;flex-wrap:wrap;gap:8px;width:auto;max-width:100%;
+            border:none !important;border-radius:0;overflow:visible;background:transparent}
+  .seg.seg-wrap button{
+    flex:0 1 auto;border:1px solid var(--line) !important;border-radius:999px;background:#fff;
     padding:10px 16px;margin:0;color:var(--muted);font-weight:600;
   }
-  .seg-wrap button.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  .seg-wrap button:active{transform:scale(.97)}
+  .seg.seg-wrap button.on{background:var(--navy);border-color:var(--navy) !important;color:#fff}
+  .seg.seg-wrap button:active{transform:scale(.97)}
   .rgroup{border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
   .rgroup:first-of-type{border-top:none;margin-top:0;padding-top:0}
   .rgroup-title{
@@ -421,6 +421,32 @@
     </section>
 
     <section class="card">
+      <h2>Itel</h2>
+      <div class="field">
+        <label>Was an Itel sample taken for this loss?</label>
+        <div class="seg seg-wrap" data-lseg="itel">
+          <button type="button" data-v="Sample taken">Sample taken</button>
+          <button type="button" data-v="No sample taken">No sample taken</button>
+          <button type="button" data-v="N/A">N/A</button>
+        </div>
+      </div>
+      <div class="cond" id="itelCond">
+        <div class="field">
+          <label for="itelWhat">What was sampled and from where?</label>
+          <textarea id="itelWhat" placeholder="One line per sample, e.g.&#10;Carpet and pad - master bedroom&#10;LVP - kitchen" data-k></textarea>
+        </div>
+        <div class="field">
+          <label for="itelTracking">Tracking number</label>
+          <input type="text" id="itelTracking" placeholder="Shipping tracking number, if sent" data-k>
+        </div>
+      </div>
+      <div class="field">
+        <label for="itelNotes">Itel notes</label>
+        <textarea id="itelNotes" placeholder="Anything the estimator should know about the sample or the report." data-k></textarea>
+      </div>
+    </section>
+
+    <section class="card">
       <h2>Affected Rooms</h2>
       <div class="hint" style="margin-top:-6px;margin-bottom:14px">One card per affected room. Sections for cabinets, plumbing, appliances and crawlspace appear only when that room has them.</div>
       <div id="roomsBox"></div>
@@ -527,13 +553,14 @@
 
   /* ---------------- Loss-level fields ---------------- */
   var LOSS_SEGS = {
+    itel: ["Sample taken","No sample taken","N/A"],
     src:  ["Supply line","Supply valve","Pipe - Drain","Pipe - Supply","Toilet - Sewage Backup","Toilet - Tank","Sewage backup","Refrigerator - Supply line","Dishwasher - Malfunction","Water Heater","Washing Machine - Malfunction","Other"],
     srcRoom: ["Bathroom","Kitchen","Laundry room","Bedroom","Other"],
     cat:  ["Category 1","Category 2","Category 3"],
     cls:  ["Class 1","Class 2","Class 3","Class 4"]
   };
-  var lossSeg = { src:"", srcRoom:"", cat:"", cls:"" };
-  var LOSS_TEXT = ["job","idate","fname","lname","srcOther","srcRoomOther","rooms","addl"];
+  var lossSeg = { src:"", srcRoom:"", cat:"", cls:"", itel:"" };
+  var LOSS_TEXT = ["job","idate","fname","lname","srcOther","srcRoomOther","rooms","addl","itelWhat","itelTracking","itelNotes"];
 
   /* ---------------- Room schema ----------------
      ty: seg (single) | chips (multi) | text | num | ta
@@ -602,6 +629,8 @@
       {k:"flDemo",   l:"Will we be demoing flooring?", ty:"seg", o:["Yes","No"], w:yes("fl")},
       {k:"flDemoSf", l:"How many SF?", ty:"num", w:function(r){ return r.fl==="Yes" && r.flDemo==="Yes"; }},
       {k:"flSub",    l:"What material is the subfloor?", ty:"seg", o:["Plywood","Wood Plank","Gyp-Crete","Particle Board","Concrete","Other"], w:yes("fl")},
+      {k:"flItel",   l:"Will an Itel sample be taken from this room?", ty:"seg", o:["Yes","No"], w:yes("fl")},
+      {k:"flItelWhat", l:"What was sampled?", ty:"text", ph:"e.g. carpet and pad from the north wall", w:function(r){ return r.fl==="Yes" && r.flItel==="Yes"; }},
       {k:"flSubOther", l:"Other subfloor material", ty:"text", w:function(r){ return r.flSub === "Other"; }},
     ]},
 
@@ -703,6 +732,13 @@
     if(other){
       if(val === "Other") other.classList.add("show");
       else other.classList.remove("show");
+    }
+    if(key === "itel"){
+      var ic = document.getElementById("itelCond");
+      if(ic){
+        if(val === "Sample taken") ic.classList.add("show");
+        else ic.classList.remove("show");
+      }
     }
   }
   document.querySelectorAll("[data-lseg]").forEach(function(seg){
@@ -912,6 +948,15 @@
       bullet("Affected rooms: " + allRooms.join(", "));
     } else {
       bullet("Affected rooms: Unknown");
+    }
+
+    if(lossSeg.itel || v("itelWhat") || v("itelTracking") || v("itelNotes")){
+      blank(); sep(); blank();
+      bold("Itel");
+      bullet("Status: " + (lossSeg.itel || "Unknown"));
+      lines(v("itelWhat")).forEach(function(l){ bullet("Sampled: " + l); });
+      if(v("itelTracking")) bullet("Tracking number: " + v("itelTracking"));
+      lines(v("itelNotes")).forEach(bullet);
     }
 
     readRooms().forEach(function(r){
