@@ -1,5 +1,5 @@
 /* Kustom PDRI service worker */
-var VERSION = "pdri-v65";
+var VERSION = "pdri-v71";
 var SHELL = [
   "./",
   "./hub.html",
@@ -9,6 +9,7 @@ var SHELL = [
   "./moisture-check.html",
   "./initial-job-walk.html",
   "./weekly-project-update.html",
+  "./end-of-day.html",
   "./manifest.webmanifest",
   "./icon-192.png",
   "./icon-512.png"
