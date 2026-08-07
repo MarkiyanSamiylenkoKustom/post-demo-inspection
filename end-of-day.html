@@ -425,7 +425,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; END OF DAY REPORT &middot; INTERNAL TOOL &middot; v2</footer>
+<footer>KUSTOM US &middot; END OF DAY REPORT &middot; INTERNAL TOOL &middot; v3</footer>
 
 <script>
 (function(){
@@ -934,7 +934,7 @@
         if(n.__orig === undefined) n.__orig = raw;
         var key = n.__orig.trim();
         var out = tr(key);
-        n.textContent = out === null ? n.__orig : raw.replace(key, out);
+        n.textContent = out === null ? n.__orig : n.__orig.replace(key, out);
       });
     });
     root.querySelectorAll("[placeholder]").forEach(function(el){
