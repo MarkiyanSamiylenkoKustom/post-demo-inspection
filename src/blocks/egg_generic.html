@@ -1,0 +1,137 @@
+<!-- ▼ Easter egg: disco ball -->
+<style>
+#__P__Stage{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+#__P__Stage.play{background:linear-gradient(rgba(13,15,30,0) 0%,rgba(13,15,30,.35) 45%,rgba(13,15,30,.72) 100%)}
+#__P__Ball{position:absolute;top:-4px;right:16px;width:38px;pointer-events:auto;cursor:pointer;background:none;border:0;padding:0;transition:transform .9s cubic-bezier(.34,1.4,.64,1)}
+#__P__Ball .cord{display:block;width:2px;height:10px;background:#6E7BA8;margin:0 auto;transition:height .9s cubic-bezier(.34,1.4,.64,1)}
+#__P__Ball .orb{display:block;position:relative;width:38px;height:38px}
+#__P__Ball .orb svg{position:absolute;left:0;top:0;width:38px;height:38px}
+#__P__Ball .f1,#__P__Ball .f2{opacity:0}
+#__P__Stage.play #__P__Ball{transform:translateY(46px)}
+#__P__Stage.play #__P__Ball .cord{height:56px}
+#__P__Stage.play #__P__Ball .f0{animation:__P__S0 .45s steps(1) infinite}
+#__P__Stage.play #__P__Ball .f1{animation:__P__S1 .45s steps(1) infinite}
+#__P__Stage.play #__P__Ball .f2{animation:__P__S2 .45s steps(1) infinite}
+@keyframes __P__S0{0%,32%{opacity:1}33%,100%{opacity:0}}
+@keyframes __P__S1{0%,32%{opacity:0}33%,65%{opacity:1}66%,100%{opacity:0}}
+@keyframes __P__S2{0%,65%{opacity:0}66%,100%{opacity:1}}
+#__P__Sky{position:fixed;inset:0;pointer-events:none;z-index:120;display:none}
+.__P__Spark{position:absolute;opacity:0;text-shadow:0 0 8px currentColor;animation:__P__Tw 1.1s ease-in-out infinite}
+@keyframes __P__Tw{0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}50%{opacity:1;transform:scale(1.25) rotate(20deg)}}
+#__P__Man{position:absolute;bottom:12px;left:10%;height:__CH__px;width:auto;opacity:0;transform:translateY(16px);filter:drop-shadow(0 3px 4px rgba(0,0,0,.5))}
+#__P__Man.in{opacity:1;transform:translateY(0);transition:opacity .35s,transform .35s;animation:__P__Nod .8s ease-in-out .35s infinite}
+@keyframes __P__Nod{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+#__P__Man.board{animation:none;transition:transform .6s ease-in,opacity .6s;opacity:0 !important}
+#__P__Bub{position:absolute;bottom:__BH__px;left:calc(10% + 40px);max-width:230px;opacity:0;transform:scale(.6);transform-origin:bottom left;background:#F5F2EA;color:#1A1A1A;border:3px solid #1A1A1A;border-radius:4px;padding:10px 12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.74rem;font-weight:700;line-height:1.45;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5))}
+#__P__Bub::after{content:"";position:absolute;left:14px;bottom:-12px;width:0;height:0;border:6px solid transparent;border-top-color:#1A1A1A}
+#__P__Bub .rr{color:#C8102E}
+#__P__Bub.in{opacity:1;transform:scale(1);transition:opacity .25s,transform .25s cubic-bezier(.34,1.6,.64,1)}
+#__P__Bub.out{opacity:0;transform:scale(.6);transition:opacity .25s,transform .25s}
+#__P__Bus{position:absolute;bottom:8px;left:0;width:190px;transform:translateX(-220px);filter:drop-shadow(0 3px 4px rgba(0,0,0,.45))}
+#__P__Bus.drive{transition:transform 1.2s cubic-bezier(.22,.9,.35,1)}
+#__P__Bus.exit{transition:transform 1.1s cubic-bezier(.6,.05,.9,.4)}
+#__P__Stage .__P__Road{position:absolute;bottom:6px;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,#6B7280 0 14px,transparent 14px 26px);opacity:0;transition:opacity .4s}
+#__P__Stage.play .__P__Road{opacity:.8}
+@media print{#__P__Stage,#__P__Sky{display:none !important}}
+@media (prefers-reduced-motion:reduce){#__P__Stage *,#__P__Sky *{animation:none !important;transition:none !important}}
+</style>
+<div id="__P__Stage">
+  <div class="__P__Road"></div>
+  <button id="__P__Ball" type="button" aria-label="Kustom disco" title="">
+    <span class="cord"></span>
+    <span class="orb">__BALLS__</span>
+  </button>
+  <img id="__P__Man" src="data:image/png;base64,__CHAR__" alt="">
+  <div id="__P__Bub">__BUBBLE__</div>
+  <img id="__P__Bus" src="data:image/png;base64,__VAN__" alt="">
+</div>
+<div id="__P__Sky"></div>
+<script>
+(function(){
+  "use strict";
+  var stage=document.getElementById("__P__Stage");
+  var mh=document.querySelector(".masthead");
+  if(mh){ mh.style.position="relative"; mh.appendChild(stage); }
+  var sky=document.getElementById("__P__Sky");
+  var ball=document.getElementById("__P__Ball"), bus=document.getElementById("__P__Bus"),
+      man=document.getElementById("__P__Man"), bub=document.getElementById("__P__Bub"),
+      busy=false, AC=null;
+  function at(ms,fn){ setTimeout(fn,ms); }
+  function skyOn(){
+    var colors=["#E8ECFD","#8A9BF0","#F9A8D4","#FDE047","#FFFFFF","#86EFAC"];
+    sky.innerHTML="";
+    for(var i=0;i<24;i++){
+      var s=document.createElement("span");
+      s.className="__P__Spark"; s.textContent="\u2726";
+      s.style.left=(Math.random()*96+2)+"%"; s.style.top=(Math.random()*92+2)+"%";
+      s.style.color=colors[i%colors.length];
+      s.style.fontSize=(9+Math.random()*11)+"px";
+      s.style.animationDelay=(Math.random()*1.1)+"s";
+      sky.appendChild(s);
+    }
+    sky.style.display="block";
+  }
+  function skyOff(){ sky.style.display="none"; sky.innerHTML=""; }
+  function disco(dur){
+    try{
+      AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+      if(AC.state==="suspended") AC.resume();
+      var t0=AC.currentTime+0.06, b=60/126, end=t0+dur, t, i;
+      var m=AC.createGain(); m.gain.setValueAtTime(0.15,t0);
+      m.gain.setValueAtTime(0.15,end-0.5); m.gain.linearRampToValueAtTime(0.0001,end);
+      m.connect(AC.destination);
+      for(t=t0;t<end;t+=b){
+        var o=AC.createOscillator(),g=AC.createGain();
+        o.type="sine"; o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(46,t+0.12);
+        g.gain.setValueAtTime(0.9,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.15);
+        o.connect(g); g.connect(m); o.start(t); o.stop(t+0.16);
+      }
+      var nb=AC.createBuffer(1,AC.sampleRate*0.05|0,AC.sampleRate), dch=nb.getChannelData(0);
+      for(i=0;i<dch.length;i++) dch[i]=Math.random()*2-1;
+      for(t=t0+b/2;t<end;t+=b){
+        var sN=AC.createBufferSource(),gN=AC.createGain(),fN=AC.createBiquadFilter();
+        sN.buffer=nb; fN.type="highpass"; fN.frequency.value=6500;
+        gN.gain.setValueAtTime(0.26,t); gN.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+        sN.connect(fN); fN.connect(gN); gN.connect(m); sN.start(t);
+      }
+      var bass=[110,110,220,110,98,98,196,98,87.31,87.31,174.61,87.31,98,98,196,98]; i=0;
+      for(t=t0;t<end;t+=b/2){
+        var oB=AC.createOscillator(),gB=AC.createGain();
+        oB.type="square"; oB.frequency.value=bass[i++%bass.length];
+        gB.gain.setValueAtTime(0.13,t); gB.gain.linearRampToValueAtTime(0.001,t+b/2*0.9);
+        oB.connect(gB); gB.connect(m); oB.start(t); oB.stop(t+b/2);
+      }
+    }catch(e){}
+  }
+  ball.addEventListener("click",function(){
+    if(busy) return; busy=true;
+    stage.classList.add("play");
+    skyOn(); disco(6.4);
+    at(900,function(){ man.classList.add("in"); });
+    at(1400,function(){ bub.classList.add("in"); });
+    at(3800,function(){ bub.classList.remove("in"); bub.classList.add("out"); });
+    at(3900,function(){
+      bus.classList.add("drive");
+      var stop=Math.max(4, stage.offsetWidth*0.42-100);
+      bus.style.transform="translateX("+stop+"px)";
+    });
+    at(5100,function(){
+      var bx=bus.getBoundingClientRect(), rr=man.getBoundingClientRect();
+      man.classList.add("board");
+      man.style.transform="translate("+(bx.left+bx.width*0.5-rr.left)+"px,6px)";
+    });
+    at(5800,function(){
+      bus.classList.remove("drive"); bus.classList.add("exit");
+      bus.style.transform="translateX("+(stage.offsetWidth+80)+"px)";
+    });
+    at(6800,function(){ stage.classList.remove("play"); skyOff(); });
+    at(7800,function(){
+      bus.classList.remove("exit"); bus.style.transform="";
+      man.classList.remove("in","board"); man.style.transform="";
+      bub.classList.remove("in","out");
+      busy=false;
+    });
+  });
+})();
+</script>
+<!-- ▲ Easter egg -->

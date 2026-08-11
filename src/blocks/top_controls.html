@@ -1,0 +1,35 @@
+<!-- ▼ Top controls: quick reset + back-to-top -->
+<style>
+#topResetRow{display:flex;justify-content:flex-end;margin:-4px 0 12px}
+#topResetBtn{font-family:inherit;font-size:.76rem;font-weight:700;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+#topResetBtn:hover{color:var(--err);border-color:var(--err)}
+#toTopBtn{position:fixed;right:12px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:45;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--navy);font-size:20px;font-weight:700;box-shadow:0 3px 12px rgba(0,0,0,.2);display:none;cursor:pointer}
+#toTopBtn.show{display:block}
+@media(min-width:980px){#toTopBtn{bottom:24px;right:20px}}
+@media print{#topResetRow,#toTopBtn{display:none !important}}
+</style>
+<button id="toTopBtn" type="button" aria-label="Back to top" title="">&uarr;</button>
+<script>
+(function(){
+  "use strict";
+  var fc=document.querySelector(".form-col");
+  var rb=document.getElementById("resetBtn");
+  if(fc && rb){
+    var row=document.createElement("div");
+    row.id="topResetRow";
+    var b=document.createElement("button");
+    b.type="button"; b.id="topResetBtn"; b.textContent="Reset Form";
+    b.addEventListener("click",function(){ rb.click(); });
+    row.appendChild(b);
+    fc.insertBefore(row, fc.firstChild);
+  }
+  var t=document.getElementById("toTopBtn");
+  function chk(){ t.classList.toggle("show", (window.scrollY||window.pageYOffset||0) > 400); }
+  window.addEventListener("scroll", chk, {passive:true});
+  chk();
+  t.addEventListener("click",function(){
+    try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(e){ window.scrollTo(0,0); }
+  });
+})();
+</script>
+<!-- ▲ Top controls -->

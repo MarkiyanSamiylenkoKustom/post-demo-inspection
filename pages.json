@@ -1,0 +1,68 @@
+{
+ "index.html": {
+  "version": "v53",
+  "egg": {
+   "type": "bespoke",
+   "block": "egg_index"
+  }
+ },
+ "scope-sheet.html": {
+  "version": "v26",
+  "egg": {
+   "type": "generic",
+   "prefix": "segg",
+   "bubble": "Let&rsquo;s see what the <span class=\"rr\">meter</span> says!",
+   "ch": 112
+  }
+ },
+ "demo-day.html": {
+  "version": "v15",
+  "egg": {
+   "type": "generic",
+   "prefix": "degg",
+   "bubble": "Time to make some <span class=\"rr\">dust</span>!",
+   "ch": 112
+  }
+ },
+ "moisture-check.html": {
+  "version": "v13",
+  "egg": {
+   "type": "generic",
+   "prefix": "megg",
+   "bubble": "I smell <span class=\"rr\">moisture</span>!",
+   "ch": 100
+  }
+ },
+ "initial-job-walk.html": {
+  "version": "v34",
+  "egg": {
+   "type": "generic",
+   "prefix": "jegg",
+   "bubble": "Let&rsquo;s build a <span class=\"rr\">game plan</span>!",
+   "ch": 112
+  }
+ },
+ "weekly-project-update.html": {
+  "version": "v25",
+  "egg": {
+   "type": "bespoke",
+   "block": "egg_wpu"
+  }
+ },
+ "end-of-day.html": {
+  "version": "v7",
+  "egg": {
+   "type": "generic",
+   "prefix": "eegg",
+   "bubble": "&ldquo;If it&rsquo;s not in <span class=\"rr\">DASH</span>, did it even happen?!&rdquo;",
+   "ch": 112
+  }
+ },
+ "hub.html": {
+  "version": "v19",
+  "egg": {
+   "type": "bespoke",
+   "block": "egg_hub"
+  }
+ }
+}

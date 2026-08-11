@@ -1,0 +1,10 @@
+{
+  "name": "kustom-field-tools",
+  "private": true,
+  "scripts": {
+    "build": "python3 build.py",
+    "check": "python3 build.py --check",
+    "test": "node qa/master.test.js"
+  },
+  "devDependencies": { "jsdom": "^24.0.0" }
+}

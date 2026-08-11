@@ -1,0 +1,56 @@
+<!-- ▼ Field comfort: Now buttons, Job ID auto-format, scroll to missing -->
+<style>
+.nowBtn{font-family:inherit;font-size:.72rem;font-weight:700;color:var(--blue);background:var(--blue-soft);border:1px dashed var(--blue);border-radius:999px;padding:6px 12px;margin-left:8px;cursor:pointer;vertical-align:middle}
+@media print{.nowBtn{display:none !important}}
+</style>
+<script>
+(function(){
+  "use strict";
+  /* 1) One-tap "Now" next to every time field */
+  document.querySelectorAll('input[type="time"]').forEach(function(inp){
+    var b=document.createElement("button");
+    b.type="button"; b.className="nowBtn"; b.textContent="Now";
+    b.addEventListener("click",function(){
+      var d=new Date();
+      inp.value=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+      inp.dispatchEvent(new Event("input",{bubbles:true}));
+      inp.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+    var wr=document.createElement("span");
+    wr.appendChild(b);
+    inp.insertAdjacentElement("afterend", wr);
+  });
+  /* 2) Job ID auto-format: 250433091 -> 25-04-33091 (only while adding digits) */
+  var job=document.getElementById("job");
+  if(job){
+    job.addEventListener("input",function(){
+      var raw=job.value;
+      if(!/^[\d-]*$/.test(raw)) return;                     /* leave non-numeric formats alone */
+      var digits=raw.replace(/-/g,"");
+      if(digits.length>9) return;
+      var prev=job.dataset.prevLen|0;
+      job.dataset.prevLen=raw.length;
+      if(raw.length<prev) return;                            /* do not fight deletions */
+      var out=digits;
+      if(digits.length>4) out=digits.slice(0,2)+"-"+digits.slice(2,4)+"-"+digits.slice(4);
+      else if(digits.length>2) out=digits.slice(0,2)+"-"+digits.slice(2);
+      if(out!==raw){
+        job.value=out;
+        job.dataset.prevLen=out.length;
+        job.dispatchEvent(new Event("input",{bubbles:true}));
+      }
+    });
+  }
+  /* 3) After a blocked Send, scroll to the first highlighted field */
+  var send=document.getElementById("sendBtn");
+  if(send){
+    send.addEventListener("click",function(){
+      setTimeout(function(){
+        var bad=document.querySelector(".invalid");
+        if(bad){ try{ bad.scrollIntoView({behavior:"smooth",block:"center"}); }catch(e){ bad.scrollIntoView(); } }
+      }, 180);
+    });
+  }
+})();
+</script>
+<!-- ▲ Field comfort -->
