@@ -57,8 +57,9 @@ if __name__ == "__main__":
         with tempfile.TemporaryDirectory() as td:
             tdp = pathlib.Path(td)
             build(tdp)
+            def norm(t): return t.replace("\r\n", "\n")   # CRLF-agnostic: Windows checkouts must not fail CI
             bad = [n for n in json.loads(read(ROOT/'pages.json'))
-                   if not (ROOT/n).exists() or read(ROOT/n) != read(tdp/n)]
+                   if not (ROOT/n).exists() or norm(read(ROOT/n)) != norm(read(tdp/n))]
             if bad:
                 print("DRIFT: committed pages differ from build output:", bad)
                 sys.exit(1)
