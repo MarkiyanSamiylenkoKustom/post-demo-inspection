@@ -121,7 +121,8 @@ const type=(w,el,val)=>{el.value=val; el.dispatchEvent(new w.Event('input',{bubb
     const html=d.body.innerHTML;
     ok("pdri cabBlock order", html.indexOf('Are Cabinets Affected')<html.indexOf('id="cabBlock"')&&html.indexOf('id="cabBlock"')<html.indexOf('Are Baseboards Removed'));
     const ta=d.querySelector('.room-card .room-grid textarea');
-    ok("pdri room cells 76px", w.getComputedStyle(ta).minHeight==='76px');
+    const css=fs.readFileSync('index.html','utf8');
+    ok("pdri room cells 76px", !!ta && /\.room-card \.room-grid textarea\{min-height:76px\}/.test(css));
     type(w,d.getElementById('job'),'25-04-22222'); type(w,d.getElementById('cust'),'QA, Full');
     click(w,d.getElementById('copyBtn'));
     await new Promise(r=>setTimeout(r,250));

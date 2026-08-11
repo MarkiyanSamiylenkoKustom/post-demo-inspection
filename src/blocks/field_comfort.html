@@ -47,7 +47,9 @@
     send.addEventListener("click",function(){
       setTimeout(function(){
         var bad=document.querySelector(".invalid");
-        if(bad){ try{ bad.scrollIntoView({behavior:"smooth",block:"center"}); }catch(e){ bad.scrollIntoView(); } }
+        if(bad && typeof bad.scrollIntoView === "function"){
+          try{ bad.scrollIntoView({behavior:"smooth",block:"center"}); }catch(e){ try{ bad.scrollIntoView(); }catch(e2){} }
+        }
       }, 180);
     });
   }

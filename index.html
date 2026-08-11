@@ -951,7 +951,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v53</footer>
+<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v54</footer>
 
 <script>
 (function(){
@@ -2336,7 +2336,9 @@
     send.addEventListener("click",function(){
       setTimeout(function(){
         var bad=document.querySelector(".invalid");
-        if(bad){ try{ bad.scrollIntoView({behavior:"smooth",block:"center"}); }catch(e){ bad.scrollIntoView(); } }
+        if(bad && typeof bad.scrollIntoView === "function"){
+          try{ bad.scrollIntoView({behavior:"smooth",block:"center"}); }catch(e){ try{ bad.scrollIntoView(); }catch(e2){} }
+        }
       }, 180);
     });
   }
