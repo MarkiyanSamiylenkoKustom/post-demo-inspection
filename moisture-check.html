@@ -424,7 +424,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; MOISTURE INSPECTION &middot; INTERNAL TOOL &middot; v15</footer>
+<footer>KUSTOM US &middot; MOISTURE INSPECTION &middot; INTERNAL TOOL &middot; v16</footer>
 
 <script>
 (function(){
@@ -1120,8 +1120,19 @@
       document.body.removeChild(ta);
     }catch(e){}
   }
+  var HARD_MAX = 2980;   /* Dash cuts at 3000 - never hand it more than this, headers included */
+  function splitSafe(text){
+    var lim = LIMIT;
+    for(var tries=0; tries<6; tries++){
+      var parts = split(text, lim);
+      var okAll = parts.every(function(p){ return p.length <= HARD_MAX; });
+      if(okAll) return parts;
+      lim -= 250;
+    }
+    return split(text, 2000);
+  }
   /* Split at blank-line (section/room) boundaries; fall back to line boundaries inside oversized sections. */
-  function split(text){
+  function split(text, lim){
     var lines=text.split("<br/>");
     var head1=lines[0]||"", head2=lines[1]||"";
     var parts=[], cur=[], curLen=0, lastBlank=-1;
@@ -1137,7 +1148,7 @@
     for(var i=0;i<lines.length;i++){
       var ln=lines[i];
       var add=ln.length+5;
-      if(curLen+add>LIMIT && cur.length){
+      if(curLen+add>lim && cur.length){
         if(lastBlank>0) flush(lastBlank);
         else flush();
       }
@@ -1161,15 +1172,34 @@
   /* Called from copyPlain in the form. Returns true when the splitter handled the copy. */
   window.__kSplitCopy = function(text){
     if(!text || text.length<=LIMIT || text.indexOf("<br/>")===-1) { state.full=""; return false; }
-    if(state.full!==text){ state.full=text; state.parts=split(text); state.idx=0; }
+    if(state.full!==text){ state.full=text; state.parts=splitSafe(text); state.idx=0; }
     if(state.parts.length<2){ state.full=""; return false; }
     var i=state.idx, n=state.parts.length;
     rawCopy(state.parts[i]);
     state.idx=(i+1)%n;
-    if(i+1<n) toast(T("part_copied", i+1, n), 9000, (i+1)/n);
-    else toast(T("all_done", n, n), 7000, 1);
+    if(i+1<n){ toast(T("part_copied", i+1, n), 9000, (i+1)/n); setBtnLabels(i+2, n); }
+    else { toast(T("all_done", n, n), 7000, 1); setBtnLabels(0, 0); }
     return true;
   };
+  var savedLabels = null, pending = null;
+  function applyLabels(){
+    var btns = [document.getElementById("copyBtn"), document.getElementById("mCopyBtn")].filter(Boolean);
+    if(!savedLabels) savedLabels = btns.map(function(b){ return b.textContent; });
+    btns.forEach(function(b, k){
+      b.textContent = pending ? ("Copy Part " + pending.next + "/" + pending.n) : savedLabels[k];
+    });
+  }
+  function setBtnLabels(next, n){
+    pending = next ? {next:next, n:n} : null;
+    applyLabels();
+    /* the form itself flashes "Copied" for ~1.8s and then restores its old label - re-assert ours after that */
+    setTimeout(applyLabels, 2000);
+    setTimeout(applyLabels, 2600);
+  }
+  /* Any form edit invalidates the split cycle and restores the buttons */
+  document.addEventListener("input", function(){
+    if(state.full){ state.full=""; state.idx=0; setBtnLabels(0, 0); }
+  }, true);
 })();
 </script>
 <!-- ▲ Note splitter -->

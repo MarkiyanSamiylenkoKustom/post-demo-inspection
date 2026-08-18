@@ -53,6 +53,29 @@ function load(file,opts){
   ok("short note single copy", w2.__copied.length===1);
   ok("short note has no PART tag", !w2.__copied[0].includes('(PART'));
   ok("no splitter toast for short", d2.getElementById('nsToast').style.display!=='block');
+  // hard-max guarantee with a very long customer name
+  const w4=load('scope-sheet.html'); const d4=w4.document;
+  type(w4, d4.getElementById('job'), '25-04-31315');
+  type(w4, d4.getElementById('cust'), 'Extraordinarily-Longname Hyphenated-Familyname von Testcustomer y Garcia de la Cruz-Smith Junior III');
+  const addl4=[...d4.querySelectorAll('textarea')].find(t=>(t.placeholder||'').includes('estimator or PM'));
+  type(w4, addl4, Array.from({length:90},(_,i)=>'Row '+(i+1)+': '+'y'.repeat(120)).join('\n'));
+  await new Promise(r=>setTimeout(r,150));
+  const btn4=d4.getElementById('copyBtn');
+  click(w4, btn4);
+  await new Promise(r=>setTimeout(r,200));
+  const n4=parseInt((w4.__copied[0].match(/\(PART 1\/(\d+)\)/)||[])[1]||'0');
+  ok("longname: split engaged", n4>=2);
+  await new Promise(r=>setTimeout(r,2800));
+  ok("longname: button shows next part (after form flash)", btn4.textContent==='Copy Part 2/'+n4);
+  for(let k=2;k<=n4;k++){ click(w4, btn4); await new Promise(r=>setTimeout(r,150)); }
+  ok("longname: ALL parts <= 2980 hard max", w4.__copied.every(p=>p.length<=2980));
+  ok("longname: button restored after cycle", btn4.textContent!=='Copy Part 1/'+n4 && !btn4.textContent.includes('Part'));
+  // editing mid-cycle resets state and label
+  click(w4, btn4); await new Promise(r=>setTimeout(r,2800));
+  ok("mid-cycle label", btn4.textContent.includes('Copy Part 2/'));
+  type(w4, d4.getElementById('job'), '25-04-31316');
+  await new Promise(r=>setTimeout(r,100));
+  ok("edit resets label", !btn4.textContent.includes('Part'));
   // uk toast language
   const w3=load('scope-sheet.html',{savedLang:'uk'});
   ok("uk lang set for toast source", w3.document.documentElement.getAttribute('lang')==='uk');
