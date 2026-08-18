@@ -951,7 +951,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v56</footer>
+<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v57</footer>
 
 <script>
 (function(){
@@ -1543,6 +1543,7 @@
 
   function render(){
     var note = buildNote();
+    if(window.__kNoteMeter) window.__kNoteMeter(note.dash);
     previewEl.innerHTML  = note.html;
     previewMob.innerHTML = note.html;
   }

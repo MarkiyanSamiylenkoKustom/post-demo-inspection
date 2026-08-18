@@ -76,6 +76,42 @@ function load(file,opts){
   type(w4, d4.getElementById('job'), '25-04-31316');
   await new Promise(r=>setTimeout(r,100));
   ok("edit resets label", !btn4.textContent.includes('Part'));
+  // ---- live meter states ----
+  const w5=load('scope-sheet.html'); const d5=w5.document;
+  const m5=()=>d5.getElementById('nsMeter');
+  const addl5=d5.getElementById('addl');
+  ok("meter hidden on short note", m5().style.display==='' || m5().style.display==='none');
+  // find the warn band by scanning typed lengths (robust to note-base drift)
+  let warnHit=false;
+  for(let n=900; n<=2000; n+=100){
+    type(w5, addl5, 'w'.repeat(n));
+    await new Promise(r=>setTimeout(r,450));
+    if(m5().className==='warn'){ warnHit=true; break; }
+    if(m5().className==='split') break;
+  }
+  ok("meter warns near limit", warnHit && /3000/.test(m5().textContent));
+  // push past limit -> split info with correct N
+  type(w5, addl5, Array.from({length:70},(_,i)=>'Line '+(i+1)+': '+'z'.repeat(110)).join('\n'));
+  await new Promise(r=>setTimeout(r,600));
+  ok("meter shows split mode", m5().className==='split' && /\d+/.test(m5().textContent));
+  const meterN=parseInt((m5().textContent.match(/(\d+)\s*part|у\s*(\d+)|en\s*(\d+)/)||[]).slice(1).find(Boolean)||'0');
+  type(w5, d5.getElementById('job'), '25-04-31399');
+  type(w5, d5.getElementById('cust'), 'Meter, Test');
+  await new Promise(r=>setTimeout(r,600));
+  click(w5, d5.getElementById('copyBtn'));
+  await new Promise(r=>setTimeout(r,250));
+  const realN=parseInt((w5.__copied[0].match(/\(PART 1\/(\d+)\)/)||[])[1]||'0');
+  ok("meter part count matches real split", meterN>=2 && Math.abs(meterN-realN)<=0, `meter ${meterN} vs real ${realN}`);
+  // shrink back -> meter hides
+  type(w5, addl5, 'short');
+  await new Promise(r=>setTimeout(r,600));
+  ok("meter hides when short again", m5().style.display==='none');
+  // uk meter language
+  const w6=load('scope-sheet.html',{savedLang:'uk'});
+  const addl6=w6.document.getElementById('addl');
+  type(w6, addl6, 'q'.repeat(2600));
+  await new Promise(r=>setTimeout(r,600));
+  ok("uk meter text", /Dash/.test(w6.document.getElementById('nsMeter').textContent) && /Нотатка|частин/.test(w6.document.getElementById('nsMeter').textContent));
   // uk toast language
   const w3=load('scope-sheet.html',{savedLang:'uk'});
   ok("uk lang set for toast source", w3.document.documentElement.getAttribute('lang')==='uk');

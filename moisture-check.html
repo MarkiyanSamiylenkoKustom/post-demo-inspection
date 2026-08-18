@@ -424,7 +424,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; MOISTURE INSPECTION &middot; INTERNAL TOOL &middot; v16</footer>
+<footer>KUSTOM US &middot; MOISTURE INSPECTION &middot; INTERNAL TOOL &middot; v17</footer>
 
 <script>
 (function(){
@@ -528,6 +528,7 @@
   var previewMob = document.getElementById("previewMobile");
   function render(){
     var note = buildNote();
+    if(window.__kNoteMeter) window.__kNoteMeter(note.dash);
     previewEl.innerHTML = note.html;
     previewMob.innerHTML = note.html;
   }
@@ -1073,8 +1074,13 @@
 #nsToast .nsBar{height:4px;border-radius:2px;background:#3a3a3a;margin-top:10px;overflow:hidden}
 #nsToast .nsBar i{display:block;height:100%;background:#C8102E;transition:width .3s}
 @media(min-width:980px){#nsToast{bottom:28px}}
-@media print{#nsToast{display:none !important}}
+@media print{#nsToast,#nsMeter{display:none !important}}
+#nsMeter{position:fixed;left:12px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:44;max-width:min(300px,70vw);border-radius:999px;padding:9px 14px;font-size:.74rem;font-weight:700;line-height:1.35;box-shadow:0 3px 12px rgba(0,0,0,.2);display:none}
+#nsMeter.warn{display:block;background:#FEF3C7;color:#92400E;border:1px solid #F59E0B}
+#nsMeter.split{display:block;background:#1A1A1A;color:#fff;border:1px solid #1A1A1A}
+@media(min-width:980px){#nsMeter{bottom:24px;left:20px}}
 </style>
+<div id="nsMeter" role="status"></div>
 <div id="nsToast" role="status"><span id="nsMsg"></span><div class="nsBar"><i id="nsFill" style="width:0%"></i></div></div>
 <script>
 (function(){
@@ -1196,6 +1202,29 @@
     setTimeout(applyLabels, 2000);
     setTimeout(applyLabels, 2600);
   }
+  /* Live meter: warn while typing as the note approaches the Dash limit */
+  var meterT=null;
+  window.__kNoteMeter=function(dash){
+    clearTimeout(meterT);
+    meterT=setTimeout(function(){
+      var el=document.getElementById("nsMeter");
+      if(!el) return;
+      var len=(dash||"").length, L=lang();
+      if(len<=2400){ el.className=""; el.style.display="none"; return; }
+      if(len<=LIMIT){
+        var W={en:"Note is approaching the Dash limit ("+len+" / 3000). A bit more and it will be copied in parts.",
+               uk:"Нотатка наближається до ліміту Dash ("+len+" / 3000). Ще трохи - і вона копіюватиметься частинами.",
+               es:"La nota se acerca al límite de Dash ("+len+" / 3000). Un poco más y se copiará por partes."};
+        el.className="warn"; el.style.display="block"; el.textContent=(W[L]||W.en);
+        return;
+      }
+      var n=splitSafe(dash).length;
+      var S={en:"Long note: it will be copied in "+n+" parts for Dash - the Copy button will guide you.",
+             uk:"Довга нотатка: вона скопіюється у "+n+" частин(и) для Dash - кнопка Copy сама проведе по частинах.",
+             es:"Nota larga: se copiará en "+n+" partes para Dash - el botón Copy le guiará."};
+      el.className="split"; el.style.display="block"; el.textContent=(S[L]||S.en);
+    }, 350);
+  };
   /* Any form edit invalidates the split cycle and restores the buttons */
   document.addEventListener("input", function(){
     if(state.full){ state.full=""; state.idx=0; setBtnLabels(0, 0); }

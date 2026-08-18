@@ -431,7 +431,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; DEMO DAY &middot; INTERNAL TOOL &middot; v18</footer>
+<footer>KUSTOM US &middot; DEMO DAY &middot; INTERNAL TOOL &middot; v19</footer>
 
 <script>
 (function(){
@@ -533,6 +533,7 @@
   var previewMob = document.getElementById("previewMobile");
   function render(){
     var note = buildNote();
+    if(window.__kNoteMeter) window.__kNoteMeter(note.dash);
     previewEl.innerHTML = note.html;
     previewMob.innerHTML = note.html;
   }
