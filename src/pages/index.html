@@ -951,7 +951,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v54</footer>
+<footer>KUSTOM US &middot; POST-DEMO REBUILD INSPECTION &middot; INTERNAL TOOL &middot; v55</footer>
 
 <script>
 (function(){
@@ -1696,6 +1696,7 @@
   function hideToast(){ toast.classList.remove("show"); }
 
   function copyPlain(text){
+    if(window.__kSplitCopy && window.__kSplitCopy(text)) return Promise.resolve();
     if(navigator.clipboard){
       return navigator.clipboard.writeText(text).catch(function(){ legacyCopy(text); });
     }
@@ -2077,6 +2078,7 @@
 })();
 </script>
 {{BLOCK:egg}}
+{{BLOCK:note_splitter}}
 {{BLOCK:top_controls}}
 {{BLOCK:field_comfort}}
 </body>

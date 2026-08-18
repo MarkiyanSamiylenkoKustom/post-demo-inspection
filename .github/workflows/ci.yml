@@ -16,3 +16,5 @@ jobs:
         run: python3 build.py --check
       - name: Functional QA (jsdom)
         run: node qa/master.test.js
+      - name: Note splitter QA
+        run: node qa/splitter.test.js

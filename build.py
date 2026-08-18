@@ -36,10 +36,8 @@ def build(outdir: pathlib.Path):
     blocks = {p.stem: read(p) for p in (SRC / "blocks").glob("*.html")}
     for name, meta in pages.items():
         s = read(SRC / "pages" / name)
-        if "{{BLOCK:top_controls}}" in s:
-            s = s.replace("{{BLOCK:top_controls}}", blocks["top_controls"])
-        if "{{BLOCK:field_comfort}}" in s:
-            s = s.replace("{{BLOCK:field_comfort}}", blocks["field_comfort"])
+        for bname in ("note_splitter", "top_controls", "field_comfort"):
+            s = s.replace("{{BLOCK:%s}}" % bname, blocks.get(bname, ""))
         egg = dict(meta["egg"]); egg["page"] = name
         s = s.replace("{{BLOCK:egg}}", build_egg(egg, sprites, blocks))
         # invariants

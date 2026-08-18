@@ -1,13 +1,13 @@
 {
  "index.html": {
-  "version": "v54",
+  "version": "v55",
   "egg": {
    "type": "bespoke",
    "block": "egg_index"
   }
  },
  "scope-sheet.html": {
-  "version": "v27",
+  "version": "v28",
   "egg": {
    "type": "generic",
    "prefix": "segg",
@@ -16,7 +16,7 @@
   }
  },
  "demo-day.html": {
-  "version": "v16",
+  "version": "v17",
   "egg": {
    "type": "generic",
    "prefix": "degg",
@@ -25,7 +25,7 @@
   }
  },
  "moisture-check.html": {
-  "version": "v14",
+  "version": "v15",
   "egg": {
    "type": "generic",
    "prefix": "megg",
@@ -34,7 +34,7 @@
   }
  },
  "initial-job-walk.html": {
-  "version": "v35",
+  "version": "v36",
   "egg": {
    "type": "generic",
    "prefix": "jegg",
@@ -43,14 +43,14 @@
   }
  },
  "weekly-project-update.html": {
-  "version": "v26",
+  "version": "v27",
   "egg": {
    "type": "bespoke",
    "block": "egg_wpu"
   }
  },
  "end-of-day.html": {
-  "version": "v8",
+  "version": "v9",
   "egg": {
    "type": "generic",
    "prefix": "eegg",

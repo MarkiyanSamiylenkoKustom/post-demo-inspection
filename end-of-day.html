@@ -433,7 +433,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; END OF DAY REPORT &middot; INTERNAL TOOL &middot; v8</footer>
+<footer>KUSTOM US &middot; END OF DAY REPORT &middot; INTERNAL TOOL &middot; v9</footer>
 
 <script>
 (function(){
@@ -631,6 +631,7 @@
     ta.remove();
   }
   function copyPlain(text){
+    if(window.__kSplitCopy && window.__kSplitCopy(text)) return Promise.resolve();
     if(navigator.clipboard) return navigator.clipboard.writeText(text).catch(function(){ legacyCopy(text); });
     legacyCopy(text);
     return Promise.resolve();
@@ -1187,6 +1188,114 @@
 })();
 </script>
 <!-- ▲ Easter egg -->
+<!-- ▼ Note splitter: Dash cuts notes at ~3000 chars - long notes are copied in parts, split at section boundaries -->
+<style>
+#nsToast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));z-index:130;max-width:min(480px,92vw);background:#1A1A1A;color:#fff;border-radius:12px;padding:14px 18px;font-size:.86rem;line-height:1.5;box-shadow:0 6px 24px rgba(0,0,0,.35);display:none}
+#nsToast b{color:#FDE047}
+#nsToast .nsBar{height:4px;border-radius:2px;background:#3a3a3a;margin-top:10px;overflow:hidden}
+#nsToast .nsBar i{display:block;height:100%;background:#C8102E;transition:width .3s}
+@media(min-width:980px){#nsToast{bottom:28px}}
+@media print{#nsToast{display:none !important}}
+</style>
+<div id="nsToast" role="status"><span id="nsMsg"></span><div class="nsBar"><i id="nsFill" style="width:0%"></i></div></div>
+<script>
+(function(){
+  "use strict";
+  var LIMIT = 2800;              /* headroom under Dash's 3000 for the part header */
+  var state = { full:"", parts:[], idx:0 };
+  var hideT = null;
+
+  function lang(){ return (document.documentElement.getAttribute("lang")||"en"); }
+  function T(key, a, b){
+    var L=lang();
+    var S={
+      part_copied:{en:"Part <b>"+a+" of "+b+"</b> copied. Paste it into Dash, then tap <b>Copy Dash Note</b> again for the next part.",
+                   uk:"Частину <b>"+a+" з "+b+"</b> скопійовано. Вставте її в Dash і тапніть <b>Copy Dash Note</b> ще раз для наступної частини.",
+                   es:"Parte <b>"+a+" de "+b+"</b> copiada. Péguela en Dash y toque <b>Copy Dash Note</b> otra vez para la siguiente parte."},
+      all_done:{en:"Part <b>"+a+" of "+b+"</b> copied - <b>that was the last one</b>. All parts pasted = the whole note is in Dash.",
+                uk:"Частину <b>"+a+" з "+b+"</b> скопійовано - <b>це остання</b>. Всі частини вставлені = вся нотатка в Dash.",
+                es:"Parte <b>"+a+" de "+b+"</b> copiada - <b>era la última</b>. Todas las partes pegadas = la nota completa está en Dash."}
+    };
+    return (S[key][L]||S[key].en);
+  }
+  function toast(html, ms, frac){
+    var t=document.getElementById("nsToast");
+    document.getElementById("nsMsg").innerHTML=html;
+    document.getElementById("nsFill").style.width=Math.round(frac*100)+"%";
+    t.style.display="block";
+    clearTimeout(hideT);
+    hideT=setTimeout(function(){ t.style.display="none"; }, ms||6500);
+  }
+  function rawCopy(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(text).catch(function(){ taCopy(text); });
+    }
+    taCopy(text);
+    return Promise.resolve();
+  }
+  function taCopy(text){
+    try{
+      var ta=document.createElement("textarea");
+      ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }catch(e){}
+  }
+  /* Split at blank-line (section/room) boundaries; fall back to line boundaries inside oversized sections. */
+  function split(text){
+    var lines=text.split("<br/>");
+    var head1=lines[0]||"", head2=lines[1]||"";
+    var parts=[], cur=[], curLen=0, lastBlank=-1;
+    function flush(upto){
+      var chunk = cur.slice(0, upto===undefined?cur.length:upto);
+      while(chunk.length && chunk[chunk.length-1].trim()==="") chunk.pop();
+      if(chunk.length) parts.push(chunk.join("<br/>"));
+      var rest = (upto===undefined)?[]:cur.slice(upto);
+      while(rest.length && rest[0].trim()==="") rest.shift();
+      cur=rest; curLen=cur.join("<br/>").length; lastBlank=-1;
+      for(var i=0;i<cur.length;i++) if(cur[i].trim()==="") lastBlank=i;
+    }
+    for(var i=0;i<lines.length;i++){
+      var ln=lines[i];
+      var add=ln.length+5;
+      if(curLen+add>LIMIT && cur.length){
+        if(lastBlank>0) flush(lastBlank);
+        else flush();
+      }
+      if(ln.trim()==="") lastBlank=cur.length;
+      cur.push(ln); curLen+=add;
+    }
+    flush();
+    if(parts.length<2) return [text];
+    var n=parts.length;
+    return parts.map(function(p,k){
+      var tag=" (PART "+(k+1)+"/"+n+")";
+      var h1 = head1.indexOf("</font>")>-1 ? head1.replace("</font>", tag+"</font>") : head1+tag;
+      if(k===0){
+        var body=p.split("<br/>"); body[0]=h1;
+        return body.join("<br/>");
+      }
+      var cont = h1 + "<br/>" + head2 + "<br/><b>--- CONTINUED ---</b><br/><br/>";
+      return cont + p;
+    });
+  }
+  /* Called from copyPlain in the form. Returns true when the splitter handled the copy. */
+  window.__kSplitCopy = function(text){
+    if(!text || text.length<=LIMIT || text.indexOf("<br/>")===-1) { state.full=""; return false; }
+    if(state.full!==text){ state.full=text; state.parts=split(text); state.idx=0; }
+    if(state.parts.length<2){ state.full=""; return false; }
+    var i=state.idx, n=state.parts.length;
+    rawCopy(state.parts[i]);
+    state.idx=(i+1)%n;
+    if(i+1<n) toast(T("part_copied", i+1, n), 9000, (i+1)/n);
+    else toast(T("all_done", n, n), 7000, 1);
+    return true;
+  };
+})();
+</script>
+<!-- ▲ Note splitter -->
+
 <!-- ▼ Top controls: quick reset + back-to-top -->
 <style>
 #topResetRow{display:flex;justify-content:flex-end;margin:-4px 0 12px}

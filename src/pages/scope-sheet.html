@@ -623,7 +623,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; MITIGATION INITIAL INSPECTION &middot; INTERNAL TOOL &middot; v27</footer>
+<footer>KUSTOM US &middot; MITIGATION INITIAL INSPECTION &middot; INTERNAL TOOL &middot; v28</footer>
 
 <script>
 (function(){
@@ -1223,6 +1223,7 @@
     ta.remove();
   }
   function copyPlain(text){
+    if(window.__kSplitCopy && window.__kSplitCopy(text)) return Promise.resolve();
     if(navigator.clipboard) return navigator.clipboard.writeText(text).catch(function(){ legacyCopy(text); });
     legacyCopy(text);
     return Promise.resolve();
@@ -1581,6 +1582,7 @@
 })();
 </script>
 {{BLOCK:egg}}
+{{BLOCK:note_splitter}}
 {{BLOCK:top_controls}}
 {{BLOCK:field_comfort}}
 </body>

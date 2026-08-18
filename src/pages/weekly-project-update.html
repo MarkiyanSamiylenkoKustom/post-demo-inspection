@@ -510,7 +510,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v26</footer>
+<footer>KUSTOM US &middot; WEEKLY PROJECT UPDATE &middot; INTERNAL TOOL &middot; v27</footer>
 
 <script>
 (function(){
@@ -757,6 +757,7 @@
 
   /* ---------- Copy ---------- */
   function copyPlain(text){
+    if(window.__kSplitCopy && window.__kSplitCopy(text)) return Promise.resolve();
     if(navigator.clipboard){
       return navigator.clipboard.writeText(text).catch(function(){ legacyCopy(text); });
     }
@@ -1150,6 +1151,7 @@
 })();
 </script>
 {{BLOCK:egg}}
+{{BLOCK:note_splitter}}
 {{BLOCK:top_controls}}
 {{BLOCK:field_comfort}}
 </body>
