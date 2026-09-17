@@ -78,6 +78,38 @@ const L1='https://my.matterport.com/show/?m=AAAA1111', L2='https://my.matterport
     const draft=w.localStorage.getItem('pdri_draft_v1')||'';
     ok("pdri draft keeps both links", draft.includes('AAAA1111') && draft.includes('BBBB2222'));
   }
+  // ---- "+" button: adds a fresh line, focuses, and the note numbers both links ----
+  for(const [file, taId, seg] of [['index.html','mplink',null],['scope-sheet.html','prescanLink',['prescan','Completed']],['demo-day.html','pdmlink',['pdm','Yes']]]){
+    const w=load(file); const d=w.document;
+    const btn=d.querySelector('[data-addline="'+taId+'"]');
+    ok(`${file} + button present`, !!btn && btn.textContent.includes('Matterport'));
+    const ta=d.getElementById(taId);
+    if(seg) click(w, [...d.querySelectorAll(`[data-lseg="${seg[0]}"] button`)].find(b=>b.getAttribute('data-v')===seg[1]));
+    // empty field: + must not create a stray blank first line
+    click(w, btn);
+    ok(`${file} + on empty adds no newline`, ta.value==='' && d.activeElement===ta);
+    type(w, ta, L1);
+    click(w, btn);
+    ok(`${file} + appends newline once`, ta.value===L1+'\n');
+    click(w, btn);
+    ok(`${file} + is idempotent on trailing newline`, ta.value===L1+'\n');
+    ta.value+=L2; ta.dispatchEvent(new w.Event('input',{bubbles:true}));
+    type(w, d.getElementById('job'), '25-04-50010');
+    type(w, d.getElementById('cust'), 'Plus, Button');
+    click(w, d.getElementById('copyBtn'));
+    await new Promise(r=>setTimeout(r,250));
+    const n=w.__copied[w.__copied.length-1]||'';
+    ok(`${file} note carries both via + flow`, n.includes(L1) && n.includes(L2));
+  }
+  // translated button label
+  {
+    const w=new JSDOM(fs.readFileSync('index.html','utf8'),{runScripts:'dangerously',url:'https://uk.local/',pretendToBeVisual:true,
+      beforeParse(x){ x.navigator.serviceWorker={register:()=>Promise.resolve()};
+        Object.defineProperty(x.navigator,'clipboard',{value:{writeText:()=>Promise.resolve()},configurable:true});
+        x.localStorage.setItem('kustom_lang','uk'); x.AudioContext=function(){}; }}).window;
+    await new Promise(r=>setTimeout(r,350));
+    ok("uk + button label", w.document.querySelector('[data-addline="mplink"]').textContent.includes('Додати ще один Matterport'));
+  }
   console.log(`\nMATTERPORT: ${pass} passed, ${fail} failed`);
   process.exit(fail?1:0);
 })();

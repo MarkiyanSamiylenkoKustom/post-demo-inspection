@@ -424,7 +424,7 @@
   <div class="p-foot" id="printFoot"></div>
 </div>
 
-<footer>KUSTOM US &middot; MOISTURE INSPECTION &middot; INTERNAL TOOL &middot; v17</footer>
+<footer>KUSTOM US &middot; MOISTURE INSPECTION &middot; INTERNAL TOOL &middot; v20</footer>
 
 <script>
 (function(){
@@ -1323,6 +1323,64 @@
       }, 180);
     });
   }
+  /* 3b) "+" buttons that add another line to a multi-link field (data-addline="<textarea id>") */
+  document.addEventListener("click", function(ev){
+    var t=ev.target, b=null;
+    while(t && t!==document){ if(t.getAttribute && t.getAttribute("data-addline")){ b=t; break; } t=t.parentNode; }
+    if(!b) return;
+    var ta=document.getElementById(b.getAttribute("data-addline"));
+    if(!ta) return;
+    if(ta.value.trim() && ta.value.slice(-1)!=="\n") ta.value += "\n";
+    ta.focus();
+    try{ ta.selectionStart = ta.selectionEnd = ta.value.length; }catch(e){}
+    ta.dispatchEvent(new Event("input",{bubbles:true}));
+  });
+  /* 4) iOS: fixed bottom elements detach while the keyboard is open - hide them, restore with a repaint nudge */
+  (function(){
+    var vv=window.visualViewport;
+    if(!vv) return;
+    function els(){
+      return [document.querySelector(".mobile-bar"), document.getElementById("toTopBtn"), document.getElementById("nsMeter")]
+        .filter(function(e){ return !!e; });
+    }
+    var hidden=false;
+    function upd(){
+      var kb=(window.innerHeight - vv.height) > 140;
+      if(kb && !hidden){
+        hidden=true;
+        els().forEach(function(e){ e.setAttribute("data-kb","1"); e.style.visibility="hidden"; });
+      } else if(!kb && hidden){
+        hidden=false;
+        els().forEach(function(e){
+          if(e.getAttribute("data-kb")){
+            e.removeAttribute("data-kb");
+            e.style.visibility="";
+            e.style.transform="translateZ(0)";
+            requestAnimationFrame(function(){ e.style.transform=""; });
+          }
+        });
+        try{ window.scrollBy(0,1); window.scrollBy(0,-1); }catch(err){}
+      }
+    }
+    vv.addEventListener("resize", upd);
+    vv.addEventListener("scroll", upd);
+  })();
+  /* 5) iOS: fixed elements can strand mid-page after scroll / URL-bar collapse - re-pin them when scrolling stops */
+  (function(){
+    var t=null;
+    function pin(){
+      [document.querySelector(".mobile-bar"), document.getElementById("toTopBtn"), document.getElementById("nsMeter")]
+        .forEach(function(e){
+          if(!e || e.getAttribute("data-kb")) return;
+          e.style.transform="translateZ(0)";
+          requestAnimationFrame(function(){ e.style.transform=""; });
+        });
+    }
+    function onScroll(){ clearTimeout(t); t=setTimeout(pin, 220); }
+    window.addEventListener("scroll", onScroll, {passive:true});
+    window.addEventListener("touchend", onScroll, {passive:true});
+    window.addEventListener("orientationchange", function(){ setTimeout(pin, 350); });
+  })();
 })();
 </script>
 <!-- ▲ Field comfort -->
