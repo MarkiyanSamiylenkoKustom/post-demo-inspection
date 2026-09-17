@@ -18,3 +18,5 @@ jobs:
         run: node qa/master.test.js
       - name: Note splitter QA
         run: node qa/splitter.test.js
+      - name: Matterport multi-link QA
+        run: node qa/matterport.test.js
